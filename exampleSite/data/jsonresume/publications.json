@@ -1,0 +1,10 @@
+{
+  "sections": [{"id": "examples", "title": "Example bibliography", "entries": [
+    {"key": "report", "title": "An Example Report", "authors": "Alex Example", "institution": "Example Lab", "type": "Research Report", "number": "R1", "year": 2026, "howpublished": "UNUSED FALLBACK"},
+    {"key": "talk", "title": "An Example Talk", "authors": "Alex Example", "howpublished": "Invited talk at **ExampleConf**", "year": 2025, "doi": "10.1234/example", "note": "[Slides](https://example.org/slides/)"},
+    {"key": "patent", "title": "An Example Patent", "type": "Granted Patent", "number": "EX 123 B2"},
+    {"key": "number-only", "title": "A numbered item", "number": "EX 456"},
+    {"key": "empty", "title": "A title-only item"}
+  ]}],
+  "links": [{"name": "CV PDF", "url": "<resume>.pdf", "icon": "download"}, {"name": "BibTeX", "url": "example-pubs.bib", "icon": "file-lines"}]
+}

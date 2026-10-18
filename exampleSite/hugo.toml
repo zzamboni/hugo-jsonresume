@@ -1,0 +1,21 @@
+baseURL = "https://example.org/"
+title = "JSON Resume example"
+locale = "en"
+theme = "blowfish"
+disableKinds = ["taxonomy", "term", "RSS", "sitemap"]
+
+[module]
+  [[module.imports]]
+    path = "github.com/zzamboni/hugo-jsonresume"
+
+[markup.goldmark.renderer]
+  unsafe = true
+
+[params]
+  colorScheme = "blowfish"
+  defaultAppearance = "light"
+  [params.header]
+    layout = "basic"
+  [params.jsonresume]
+    resumeStem = "example-cv"
+    excludeLinkRoles = ["site-home"]

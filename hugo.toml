@@ -1,0 +1,12 @@
+# Mount only presentation components. The host owns content, data and downloads.
+[module]
+  [module.hugoVersion]
+    min = "0.166.0"
+    extended = true
+
+  [[module.mounts]]
+    source = "layouts"
+    target = "layouts"
+  [[module.mounts]]
+    source = "assets"
+    target = "assets"

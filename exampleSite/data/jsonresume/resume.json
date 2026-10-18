@@ -1,0 +1,22 @@
+{
+  "basics": {
+    "name": "Alex Example",
+    "label": "Systems Engineer",
+    "summary": "Building **reliable** tools and explaining how they work.",
+    "location": {"city": "Example City", "countryCode": "CH"},
+    "profiles": [{"network": "GitHub", "username": "example", "url": "https://github.com/example"}]
+  },
+  "work": [{"name": "Example Lab", "position": "Engineer", "startDate": "2024", "highlights": ["Built reusable publishing tools."]}],
+  "education": [{"institution": "Example University", "area": "Computer Science", "studyType": "MSc", "endDate": "2023"}],
+  "projects": [{"name": "Example tool", "type": "Software", "description": "A reusable tool."}],
+  "publications": [{"name": "Full bibliography", "bibfiles": ["example.bib"]}],
+  "meta": {"themeOptions": {
+    "sections": ["work", "education", "projects:Software", "publications"],
+    "sectionLabels": {"projects:Software": "Open-source software"},
+    "links": [
+      {"name": "PDF", "url": "<resume>.pdf", "icon": "download"},
+      {"name": "Publications", "url": "publications/", "icon": "quote-left"},
+      {"name": "Home", "url": "/", "role": "site-home"}
+    ]
+  }}
+}

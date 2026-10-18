@@ -1,0 +1,31 @@
+name: Check example
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  example:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: nunocoracao/blowfish
+          ref: 51a361e068b9975c7f1df8e2bb223db03fe49c2b
+          path: exampleSite/themes/blowfish
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.25.x'
+          cache: false
+      - name: Install pinned Hugo Extended
+        env:
+          HUGO_VERSION: 0.166.0
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hugo"
+          cd "$RUNNER_TEMP/hugo"
+          curl -fsSLO "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz"
+          curl -fsSLO "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_checksums.txt"
+          sha256sum --ignore-missing -c "hugo_${HUGO_VERSION}_checksums.txt"
+          tar -xzf "hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz" hugo
+          echo "$RUNNER_TEMP/hugo" >> "$GITHUB_PATH"
+      - run: python3 tests/check_example.py
