@@ -170,8 +170,17 @@ Optional CSS variables let the host tune generic presentation:
 }
 ```
 
-Set an accent appropriate to each appearance if overriding it. Without overrides,
-the renderer inherits link colors and uses translucent neutral borders/surfaces.
+The accent colors CV entry markers. Link colors, including hover/visited and
+dark-mode states, remain controlled by the host's anchor rules. To use the accent
+for links as well, explicitly opt in from your host stylesheet:
+
+```css
+.jsonresume-generic a { color: var(--jsonresume-accent); }
+```
+
+Only add that rule when defining the variable; choose an accent appropriate to
+each appearance. Without overrides, the renderer uses the host's link colors
+and translucent neutral borders/surfaces.
 
 ### Implementation and customization
 
