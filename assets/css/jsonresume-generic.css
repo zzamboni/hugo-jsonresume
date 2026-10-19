@@ -1,0 +1,72 @@
+/* Standalone, scoped presentation. Fonts and text/link colors come from the host.
+   Optional host variables: --jsonresume-accent, --jsonresume-border,
+   --jsonresume-surface, --jsonresume-scroll-offset. No theme or dark-mode hooks. */
+.jsonresume-generic {
+  color: inherit;
+  font: inherit;
+  line-height: 1.6;
+  max-width: 100%;
+  margin-block: 2rem;
+  overflow-wrap: anywhere;
+}
+.jsonresume-generic *, .jsonresume-generic *::before { box-sizing: border-box; }
+.jsonresume-generic h1 { font-size: 2.25rem; line-height: 1.2; margin-block: 0 1rem; }
+.jsonresume-generic h2 { font-size: 1.4rem; line-height: 1.3; margin-block: 0 1rem; }
+.jsonresume-generic h3 { font-size: 1.15rem; line-height: 1.35; margin-block: 0 .25rem; }
+.jsonresume-generic a { color: var(--jsonresume-accent, inherit); text-underline-offset: .15em; }
+.jsonresume-generic a:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.jsonresume-generic .jsonresume-profile { text-align: center; margin-block-end: 2.5rem; }
+.jsonresume-generic .jsonresume-portrait { display: block; width: 9rem; height: 9rem; object-fit: cover; border-radius: 50%; margin: 0 auto 1rem; }
+.jsonresume-generic .jsonresume-label { font-size: 1.25rem; margin-block: .5rem; }
+.jsonresume-generic .jsonresume-summary { max-width: 80ch; margin-inline: auto; }
+.jsonresume-generic .jsonresume-profiles { display: flex; justify-content: center; flex-wrap: wrap; gap: .5rem 1rem; list-style: none; padding: 0; margin-block: 1rem; }
+.jsonresume-generic .jsonresume-actions,
+.jsonresume-generic .jsonresume-publications-downloads { display: flex; justify-content: center; flex-wrap: wrap; gap: .5rem; margin-block: 1.5rem; }
+.jsonresume-generic .jsonresume-publications-downloads { justify-content: flex-start; }
+.jsonresume-generic .jsonresume-actions a,
+.jsonresume-generic .jsonresume-publications-downloads a { display: inline-flex; align-items: center; gap: .4rem; border: 1px solid currentColor; border-radius: .4rem; padding: .35rem .7rem; text-decoration: none; }
+.jsonresume-generic .jsonresume-action-icon { display: inline-flex; width: 1em; height: 1em; flex-shrink: 0; }
+.jsonresume-generic .jsonresume-action-icon svg { width: 100%; height: 100%; }
+.jsonresume-generic .jsonresume-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2rem; }
+.jsonresume-generic .jsonresume-sections,
+.jsonresume-generic .jsonresume-publications-content { min-width: 0; }
+.jsonresume-generic .jsonresume-toc { padding: 1rem; border: 1px solid var(--jsonresume-border, rgb(128 128 128 / .35)); border-radius: .4rem; }
+.jsonresume-generic .jsonresume-toc ul { margin: 0; padding-inline-start: 1.25rem; }
+.jsonresume-generic .jsonresume-toc li { margin-block: .25rem; }
+.jsonresume-generic .jsonresume-section { border-bottom: 1px solid var(--jsonresume-border, rgb(128 128 128 / .35)); padding-block: 1.5rem; }
+.jsonresume-generic .jsonresume-section:first-child { padding-block-start: 0; }
+.jsonresume-generic .jsonresume-section-content { display: grid; gap: 1.5rem; min-width: 0; }
+.jsonresume-generic .jsonresume-entry { position: relative; padding-inline-start: 1.2rem; border-inline-start: 2px solid var(--jsonresume-border, rgb(128 128 128 / .35)); min-width: 0; }
+.jsonresume-generic .jsonresume-entry::before { content: ""; position: absolute; inset-block-start: .5rem; inset-inline-start: -5px; width: 8px; height: 8px; border-radius: 50%; background: var(--jsonresume-accent, currentColor); }
+.jsonresume-generic .jsonresume-position { font-weight: 600; margin-block: .1rem; }
+.jsonresume-generic .jsonresume-meta { opacity: .75; font-size: .9em; margin-block: .35rem .65rem; }
+.jsonresume-generic .jsonresume-description { margin-block: .65rem; }
+.jsonresume-generic .jsonresume-description p { margin-block: .4rem; }
+.jsonresume-generic .jsonresume-highlights { list-style: disc; padding-inline-start: 1.3rem; }
+.jsonresume-generic .jsonresume-tags { display: flex; flex-wrap: wrap; list-style: none; gap: .45rem; padding: 0; }
+.jsonresume-generic .jsonresume-tags li { background: var(--jsonresume-surface, rgb(128 128 128 / .13)); border-radius: .4rem; padding: .2rem .55rem; font-size: .85em; }
+.jsonresume-generic .jsonresume-entry-logo { float: right; width: 52px; height: 52px; object-fit: contain; margin: 0 0 .6rem .8rem; border-radius: .4rem; background: white; padding: 4px; }
+.jsonresume-generic .jsonresume-small-link { font-size: .9em; }
+.jsonresume-generic .jsonresume-pub-section { padding-block: 1rem 2rem; }
+.jsonresume-generic .jsonresume-pub-item { display: grid; grid-template-columns: 3rem minmax(0, 1fr); gap: .5rem; margin-block: 1.1rem; }
+.jsonresume-generic .jsonresume-pub-number { font-size: .9em; white-space: nowrap; }
+.jsonresume-generic .jsonresume-pub-info { min-width: 0; }
+.jsonresume-generic .jsonresume-pub-info strong { display: block; }
+.jsonresume-generic .jsonresume-pub-meta { margin-block-start: .2rem; opacity: .75; font-size: .9em; }
+.jsonresume-generic .jsonresume-section,
+.jsonresume-generic .jsonresume-pub-item,
+.jsonresume-generic .anchor { scroll-margin-top: var(--jsonresume-scroll-offset, 6rem); }
+@media (min-width: 64rem) {
+  .jsonresume-generic .jsonresume-body:has(> .jsonresume-toc) { grid-template-columns: minmax(0, 1fr) minmax(10rem, 14rem); }
+  .jsonresume-generic .jsonresume-toc { grid-column: 2; grid-row: 1; align-self: start; position: sticky; top: var(--jsonresume-scroll-offset, 2rem); }
+  .jsonresume-generic .jsonresume-sections,
+  .jsonresume-generic .jsonresume-publications-content { grid-column: 1; grid-row: 1; }
+}
+@media print {
+  .jsonresume-generic .jsonresume-toc,
+  .jsonresume-generic .jsonresume-actions,
+  .jsonresume-generic .jsonresume-publications-downloads { display: none; }
+  .jsonresume-generic .jsonresume-body { display: block; }
+  .jsonresume-generic .jsonresume-entry,
+  .jsonresume-generic .jsonresume-pub-item { break-inside: avoid; }
+}

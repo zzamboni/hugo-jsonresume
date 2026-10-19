@@ -1,4 +1,4 @@
-name: Check example
+name: Check examples
 on: [push, pull_request, workflow_dispatch]
 permissions:
   contents: read
@@ -28,4 +28,5 @@ jobs:
           sha256sum --ignore-missing -c "hugo_${HUGO_VERSION}_checksums.txt"
           tar -xzf "hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz" hugo
           echo "$RUNNER_TEMP/hugo" >> "$GITHUB_PATH"
-      - run: python3 tests/check_example.py
+      - name: Check Blowfish and generic renderers
+        run: python3 tests/check_example.py

@@ -1,15 +1,17 @@
 # Hugo JSON Resume
 
-Render JSON Resume and an optional bibliography as native Hugo pages using
-Blowfish's typography, icons, breadcrumbs, navigation and table of contents.
-This is a **Blowfish-specific Hugo Module**, not a standalone theme. It does
-not depend on Eventide or execute resume-toolkit during a Hugo build.
+Render JSON Resume and an optional bibliography inside a Hugo site.
+**Blowfish is the default integration**, retaining its typography, icons,
+breadcrumbs and table of contents. A **generic integration** supplies scoped
+CSS and labeled links for other themes, without a theme-specific icon library
+or Tailwind. This is a Hugo Module, not a standalone theme. It does not depend
+on Eventide or execute resume-toolkit during a Hugo build.
 
 ## Requirements and installation
 
 Tested with Hugo Extended **0.166.0**, Blowfish **v3.8.0**, and Go **1.25.1**.
-Install Go to resolve Hugo Modules. Keep the host's existing Blowfish setup;
-the module does not import another copy of the theme.
+Install Go to resolve Hugo Modules. Keep the host's existing theme setup;
+the module does not import a theme. The generic example needs no theme installed.
 
 From a Hugo site, initialize Go module metadata if it is not already present:
 
@@ -97,6 +99,7 @@ In `config/_default/params.toml`:
 
 ```toml
 [jsonresume]
+  integration = "blowfish" # Default; choose "generic" for other themes.
   resumeData = "jsonresume.resume"
   publicationsData = "jsonresume.publications"
   resumeStem = "example-cv"
@@ -115,7 +118,79 @@ The bibliography-note URL defaults to the CV's `publications/` child.
 The publications title comes from front matter; an optional
 `publicationsDescription` overrides the page description. No roles are
 excluded by default. Icons use Blowfish names, with common Font Awesome
-aliases and a generic-link fallback for action icons.
+aliases and a generic-link fallback for action icons in the Blowfish integration.
+
+## Using another theme
+
+Set `integration = "generic"` in `[params.jsonresume]` in `hugo.toml`, or
+`[jsonresume]` in `config/_default/params.toml`. An omitted setting continues to
+select Blowfish; unknown integration names fail with a configuration error.
+The same JSON data, options, action links and publication anchors work in both
+integrations.
+
+The generic renderer has its own responsive layout and section TOC. It inherits
+the host's fonts and text/link colors. It uses visible network names for social
+links and a small built-in link symbol for action buttons. It does not add
+breadcrumbs or floating action buttons. Light/dark appearance follows the host's
+colors rather than assuming a particular dark-mode class or toggle.
+
+The native `type = "jsonresume"` pages above work with themes whose base template
+provides a `main` block. Other themes can embed the renderer in ordinary content
+pages using shortcodes:
+
+```go-html-template
+{{< jsonresume >}}
+```
+
+For the publications child page, use:
+
+```go-html-template
+{{< publications >}}
+```
+
+Use `{{< ... >}}` so the generated HTML is rendered directly. For shortcode
+pages, omit `type = "jsonresume"` and `layout = "cv"` / `"publications"`; the
+host's normal page layout should render `.Content`. That layout owns the outer
+navigation, page width and any page-title display. A theme that wraps content
+in restrictive typography styles may need a small host CSS adjustment.
+`exampleGeneric/` demonstrates this with minimal host templates and no theme.
+
+Both renderers generate their TOCs from the JSON sections; these are separate
+from Hugo's Markdown `.TableOfContents`. Embed one renderer per page. Keep the
+publications page as a child of its CV so download URLs resolve consistently.
+
+Optional CSS variables let the host tune generic presentation:
+
+```css
+.jsonresume-generic {
+  --jsonresume-accent: #176d83;
+  --jsonresume-border: rgb(128 128 128 / .35);
+  --jsonresume-surface: rgb(128 128 128 / .13);
+  --jsonresume-scroll-offset: 6rem;
+}
+```
+
+Set an accent appropriate to each appearance if overriding it. Without overrides,
+the renderer inherits link colors and uses translucent neutral borders/surfaces.
+
+### Implementation and customization
+
+Public partials `jsonresume/cv.html` and `jsonresume/publications.html` dispatch
+to `jsonresume/integrations/<integration>/`. Each integration owns its page
+markup, styling and icon behavior. The original Blowfish CSS paths remain intact;
+generic pages load only `css/jsonresume-generic.css`.
+
+Shared helpers handle data lookup (`data.html`), section selection
+(`cv-sections.html`, `publication-sections.html`), dates, action URL resolution
+and role filtering (`links.html`), publication metadata (`publication-meta.html`),
+and the TOC's section links (`toc-markup.html`). Both integrations also reuse the
+existing semantic entry markup (`entry.html`, `publication-entry.html`) and
+labeled action-link markup (`action-links.html`). Host overrides at these paths
+continue to take precedence.
+
+There is no theme detection or adapter registration framework. A future supported
+theme can add its own integration when there is a concrete need. Generic support
+is an embedding option, not a promise of automatic visual matching for all themes.
 
 ## Example and validation
 
@@ -129,13 +204,23 @@ Clone the tested Blowfish version into the example (only needed once):
 ```sh
 git clone --depth 1 --branch v3.8.0 https://github.com/nunocoracao/blowfish.git exampleSite/themes/blowfish
 hugo server --source exampleSite
-python3 tests/check_example.py
 ```
 
-The example's Go replacement points to this checkout for development; it is
-not mounted into consuming sites. The check builds with real Blowfish and
-checks routes, section selection, action links, metadata and imported CSS.
-CI runs it with the pinned theme commit and Hugo version.
+Or serve the generic example, with no theme clone required:
+
+```sh
+hugo server --source exampleGeneric
+```
+
+Both expose `/cv/` and `/cv/publications/`. Their data is shared from
+`exampleSite/data/`; illustrative download links do not point to generated PDFs.
+
+Both examples' Go replacements point to this checkout for development; examples
+are not mounted into consuming sites. Run `python3 tests/check_example.py` after
+cloning Blowfish. The checks build both integrations and cover routes, sections,
+action links, metadata, icons, imported CSS, generic shortcodes/native layouts
+and invalid integration selection. CI runs them with the pinned Blowfish commit
+and Hugo version.
 
 ## Origin and license
 

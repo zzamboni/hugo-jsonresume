@@ -1,0 +1,6 @@
+{{- /* Read the host's configurable, dot-separated data key in one place. */ -}}
+{{- $value := hugo.Data -}}
+{{- range split . "." -}}
+  {{- $value = index $value . -}}
+{{- end -}}
+{{- return $value -}}

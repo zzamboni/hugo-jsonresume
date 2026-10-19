@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ .Title }} · {{ site.Title }}</title>
+  <style>
+    /* These are host styles, deliberately separate from the module. */
+    :root { color-scheme: light dark; }
+    body { font-family: system-ui, sans-serif; line-height: 1.6; margin: auto; padding: 1.5rem; max-width: 70rem; background: #fcfcfa; color: #263238; }
+    a { color: #176d83; }
+    body > header, body > footer { padding-block: 1rem; border-block-end: 1px solid #8886; }
+    body > header nav { display: flex; gap: 1rem; flex-wrap: wrap; }
+    body > footer { border-block-start: 1px solid #8886; border-block-end: 0; margin-block-start: 2rem; }
+    @media (prefers-color-scheme: dark) { body { background: #20272b; color: #e3e8ea; } a { color: #85cddd; } }
+  </style>
+</head>
+<body>
+  <header><nav aria-label="Site navigation"><a href="/">Home</a><a href="/cv/">CV</a><a href="/cv/publications/">Publications</a></nav></header>
+  <main>{{ block "main" . }}{{ end }}</main>
+  <footer>Minimal host · Shared synthetic data · No theme required</footer>
+</body>
+</html>

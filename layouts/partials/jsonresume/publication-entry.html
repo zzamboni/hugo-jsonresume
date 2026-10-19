@@ -1,0 +1,16 @@
+{{ $number := .number }}
+{{ with .entry }}
+            <div class="jsonresume-pub-item" id="pub-{{ .key }}" itemscope itemtype="https://schema.org/ScholarlyArticle">
+              <a href="#pub-{{ .key }}" class="jsonresume-pub-number" title="Permanent link to publication">[{{ $number }}]</a>
+              <div class="jsonresume-pub-info">
+                <strong itemprop="name">{{ if .url }}<a href="{{ .url | safeURL }}" itemprop="url">{{ .title | markdownify }}</a>{{ else }}{{ .title | markdownify }}{{ end }}</strong>
+                {{ with .authors }}<div>{{ . | markdownify }}</div>{{ else }}{{ with .editor }}<div>Editors: {{ . | markdownify }}</div>{{ end }}{{ end }}
+                {{ $meta := partial "jsonresume/publication-meta.html" . }}
+                {{ with $meta }}
+                <div class="jsonresume-pub-meta">
+                  {{ range $index, $part := . }}{{ if $index }} · {{ end }}{{ $part }}{{ end }}
+                </div>
+                {{ end }}
+              </div>
+            </div>
+{{ end }}
