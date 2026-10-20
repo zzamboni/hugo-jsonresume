@@ -1,5 +1,6 @@
 """Build the real Blowfish example and check the renderer's public contract."""
 import html
+import json
 import os
 from pathlib import Path
 import re
@@ -43,3 +44,32 @@ with tempfile.TemporaryDirectory() as destination:
     assert len(css) == 3, css
     assert "Example City" in cv and "<svg" in cv  # Real Blowfish icon integration.
     print("PASS: CV/publications routes, links, groups, metadata, Markdown, icons and imported CSS")
+
+# Render both selection modes together to verify that the entry's section,
+# rather than a global grouping flag, controls the project type subtitle.
+with tempfile.TemporaryDirectory() as fixture, tempfile.TemporaryDirectory() as destination:
+    data = Path(fixture) / "jsonresume"
+    data.mkdir()
+    resume = json.loads((ROOT / "exampleSite/data/jsonresume/resume.json").read_text())
+    resume["projects"] = [
+        {"name": "Typed project", "type": "Software"},
+        {"name": "Untyped project"},
+        {"name": "Empty type project", "type": ""},
+        {"name": "Literal type project", "type": "R&D <tools> **literal**"},
+    ]
+    resume["work"][0]["type"] = "Not a project type"
+    resume["meta"]["themeOptions"]["sections"] = ["work", "projects", "projects:Software"]
+    (data / "resume.json").write_text(json.dumps(resume))
+    subprocess.run([HUGO, "--source", str(ROOT / "exampleSite"),
+                    "--destination", destination], check=True,
+                   env={**os.environ, "HUGO_DATADIR": fixture})
+    cv = (Path(destination) / "cv/index.html").read_text()
+    full = cv.split('id="projects"', 1)[1].split("</section>", 1)[0]
+    grouped = cv.split('id="projects-software"', 1)[1].split("</section>", 1)[0]
+    assert '<p class="jsonresume-meta">Software</p>' in full
+    assert '<p class="jsonresume-meta">R&amp;D &lt;tools&gt; **literal**</p>' in full
+    assert full.count('class="jsonresume-meta"') == 2  # No empty subtitles.
+    assert "Typed project" in grouped and 'class="jsonresume-meta"' not in grouped
+    assert "Untyped project" in full and "Untyped project" not in grouped
+    assert "Not a project type" not in cv
+    print("PASS: project types appear only in the full section, escaped as plain text")

@@ -31,6 +31,7 @@
       {{ with $e.location }} · {{ . | markdownify }}{{ end }}
     </p>
   {{ end }}
+  {{ if eq $section "projects" }}{{ with $e.type }}<p class="jsonresume-meta">{{ . }}</p>{{ end }}{{ end }}
   {{ with $e.description }}<div class="jsonresume-description">{{ . | markdownify }}</div>{{ end }}
   {{ with $e.summary }}<div class="jsonresume-description">{{ . | markdownify }}</div>{{ end }}
   {{ with $e.reference }}<div class="jsonresume-description">{{ . | markdownify }}</div>{{ end }}
