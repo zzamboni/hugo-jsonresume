@@ -63,6 +63,7 @@ downloaded PDFs/BibTeX, images, menus, link filtering and build workflows.
 Place your JSON Resume at `data/jsonresume/resume.json`. Text fields support
 Markdown. 
 
+Many of the [Eventide theme](https://github.com/zzamboni/jsonresume-theme-eventide#options) options are supported:
 Optional `meta.themeOptions` supports `sections`, `sectionLabels`,
 explicit `projects:<type>` section identifiers, and
 action `links` (objects with `name`, `url`, optional `icon` and `role`).
@@ -84,8 +85,8 @@ The bibliography input is **normalized JSON**, not raw BibTeX:
 }
 ```
 
-Store it at `data/jsonresume/publications.json`. resume-toolkit can generate
-this shape; other producers may supply it directly. Entries support `url`,
+Store it at `data/jsonresume/publications.json`. [resume-toolkit](https://github.com/zzamboni/resume-toolkit) can generate
+this format; other producers may supply it directly. Entries support `url`,
 `editor`, `doi`, `note`, and venue fields in this order: `journal`, `booktitle`,
 `publisher`, `school`, `institution`, `howpublished`. `type` and `number` are
 rendered together; dots separate only populated metadata parts. Keep entry
@@ -139,7 +140,5 @@ CI runs it with the pinned theme commit and Hugo version.
 
 ## Origin and license
 
-Extracted from `zzamboni/zzamboni.org` staging commit
-`eb336a4b1cbbb324ada30c3b49ea9793383b8a9d`, retaining the rendering behavior
-and namespaced `jsonresume-*` styles. The profile layout adapts Blowfish's
+The profile layout adapts Blowfish's
 MIT-licensed profile partial. See `LICENSE` and `NOTICE`.
