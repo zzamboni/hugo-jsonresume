@@ -1,9 +1,8 @@
-# Hugo JSON Resume
+# JSON Resume in Hugo
 
 Render JSON Resume and an optional bibliography as native Hugo pages using
 Blowfish's typography, icons, breadcrumbs, navigation and table of contents.
-This is a **Blowfish-specific Hugo Module**, not a standalone theme. It does
-not depend on Eventide or execute resume-toolkit during a Hugo build.
+This is a **Blowfish-specific Hugo Module**, not a standalone theme.
 
 ## Requirements and installation
 
@@ -31,8 +30,7 @@ hugo mod get github.com/zzamboni/hugo-jsonresume@COMMIT_SHA
 ```
 
 The pin keeps deployments reproducible. Repeat with a new reviewed commit to
-update. Never commit a local `replace` directive into a consuming production
-site. Host templates/assets at the same paths override the imported module.
+update.
 
 ## Content and data
 
@@ -63,11 +61,13 @@ The host retains control of content paths, page metadata, data snapshots,
 downloaded PDFs/BibTeX, images, menus, link filtering and build workflows.
 
 Place your JSON Resume at `data/jsonresume/resume.json`. Text fields support
-Markdown. Optional `meta.themeOptions` supports `sections`, `sectionLabels`,
+Markdown. 
+
+Optional `meta.themeOptions` supports `sections`, `sectionLabels`,
 explicit `projects:<type>` section identifiers, and
 action `links` (objects with `name`, `url`, optional `icon` and `role`).
 Grouped projects are selected by explicit `projects:<type>` identifiers in
-`sections`; the boolean `projectsByType` alone does not expand them.
+`sections`.
 
 The bibliography input is **normalized JSON**, not raw BibTeX:
 
