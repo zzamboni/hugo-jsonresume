@@ -1,5 +1,6 @@
 """Exercise the same data contract with Blowfish and a theme-free host."""
 import html
+import json
 import os
 from pathlib import Path
 import re
@@ -71,6 +72,41 @@ def build(source, destination, *args, check=True):
     return result
 
 
+def check_project_types(example, integration):
+    # Keep relative module paths intact while giving each integration its own
+    # data. The generic example normally mounts the shared exampleSite data.
+    with tempfile.TemporaryDirectory(prefix="jsonresume-test-", dir=ROOT) as fixture:
+        source = Path(fixture)
+        shutil.copytree(ROOT / example, source, dirs_exist_ok=True,
+                        ignore=shutil.ignore_patterns("themes", "resources", "public"))
+        config = source / "hugo.toml"
+        config.write_text(config.read_text().replace('../exampleSite/data', 'data'))
+        data = source / "data/jsonresume"
+        data.mkdir(parents=True, exist_ok=True)
+        resume = json.loads((ROOT / "exampleSite/data/jsonresume/resume.json").read_text())
+        resume["projects"] = [
+            {"name": "Typed project", "type": "Software"},
+            {"name": "Untyped project"},
+            {"name": "Empty type project", "type": ""},
+            {"name": "Literal type project", "type": "R&D <tools> **literal**"},
+        ]
+        resume["work"][0]["type"] = "Not a project type"
+        resume["meta"]["themeOptions"]["sections"] = ["work", "projects", "projects:Software"]
+        (data / "resume.json").write_text(json.dumps(resume))
+        with tempfile.TemporaryDirectory() as destination:
+            build(source, Path(destination), "--themesDir", str(ROOT / "exampleSite/themes"))
+            cv = (Path(destination) / "cv/index.html").read_text()
+            full = cv.split('id="projects"', 1)[1].split("</section>", 1)[0]
+            grouped = cv.split('id="projects-software"', 1)[1].split("</section>", 1)[0]
+            assert '<p class="jsonresume-meta">Software</p>' in full
+            assert '<p class="jsonresume-meta">R&amp;D &lt;tools&gt; **literal**</p>' in full
+            assert full.count('class="jsonresume-meta"') == 2
+            assert "Typed project" in grouped and 'class="jsonresume-meta"' not in grouped
+            assert "Untyped project" in full and "Untyped project" not in grouped
+            assert "Not a project type" not in cv
+        print(f"PASS: {integration} project type subtitles, grouping and escaping")
+
+
 def main():
     with tempfile.TemporaryDirectory() as destination:
         out = Path(destination)
@@ -83,6 +119,9 @@ def main():
         build(ROOT / "exampleGeneric", out)
         shortcode_pages = check_contract(out, "generic")
         print("PASS: generic shortcodes without a theme")
+
+    for example, integration in (("exampleSite", "blowfish"), ("exampleGeneric", "generic")):
+        check_project_types(example, integration)
 
     # A sibling fixture preserves the example's relative module/data paths.
     with tempfile.TemporaryDirectory(prefix="jsonresume-test-", dir=ROOT) as fixture:
