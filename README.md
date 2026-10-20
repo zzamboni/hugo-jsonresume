@@ -149,6 +149,11 @@ them. A plain `projects` section includes **all** projects, even when explicit
 groups are also listed; combining them can repeat entries. This differs from
 Eventide's untyped-project catch-all when grouping is enabled.
 
+In the full `projects` section, a project's nonempty `type` is shown as a
+subtitle in plain text, like Eventide's ungrouped project metadata. Explicit
+`projects:<type>` groups omit this subtitle because the section heading
+already identifies the type. No `projectsByType` setting is needed.
+
 These settings affect the CV only. The separate publications page takes its
 order from the normalized bibliography's `sections` array, its headings from
 each section's `title`, and its content from `entries`.
