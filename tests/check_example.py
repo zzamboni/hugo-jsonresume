@@ -121,6 +121,69 @@ def check_project_types(example, integration):
         print(f"PASS: {integration} project type subtitles, grouping and escaping")
 
 
+def check_toc_settings(example, integration):
+    # Each case overrides a different level, including both explicit booleans.
+    # Blowfish ships an article-level false default; generic has no such default.
+    cases = [
+        ({}, (False, False), (True, True)),
+        ({"eventide": False}, (False, False), (False, True)),
+        ({"eventide": True}, (False, False), (True, True)),
+        ({"article": True, "eventide": False}, (True, True), (False, True)),
+        ({"article": False, "eventide": True}, (False, False), (True, True)),
+        ({"module": False, "article": True, "eventide": True}, (False, False), (False, False)),
+        ({"module": True, "article": False, "eventide": False}, (True, True), (True, True)),
+        ({"cv": False, "pubs": True, "module": True}, (False, True), (False, True)),
+        ({"cv": True, "pubs": False, "module": False}, (True, False), (True, False)),
+        ({"cv": True, "pubs": True, "empty": True}, (False, False), (False, False)),
+    ]
+    with tempfile.TemporaryDirectory(prefix="jsonresume-test-", dir=ROOT) as fixture:
+        source = Path(fixture)
+        shutil.copytree(ROOT / example, source, dirs_exist_ok=True,
+                        ignore=shutil.ignore_patterns("themes", "resources", "public"))
+        config = source / "hugo.toml"
+        original_config = config.read_text().replace('../exampleSite/data', 'data')
+        data = source / "data/jsonresume"
+        data.mkdir(parents=True, exist_ok=True)
+        pages = [source / "content/cv/_index.md", source / "content/cv/publications/index.md"]
+        original_pages = [re.sub(r'^showTableOfContents = .*\n', '', p.read_text(), flags=re.M) for p in pages]
+        for settings, blowfish, generic in cases:
+            text = original_config
+            if "module" in settings:
+                text = re.sub(r'(\[params\.jsonresume\])',
+                              r'\1\nshowTableOfContents = ' + str(settings['module']).lower(), text)
+            if "article" in settings:
+                text += '\n[params.article]\nshowTableOfContents = ' + str(settings['article']).lower() + '\n'
+            config.write_text(text)
+            for key, page, original in zip(("cv", "pubs"), pages, original_pages):
+                setting = f'showTableOfContents = {str(settings[key]).lower()}\n' if key in settings else ''
+                page.write_text(original.replace('+++\n', '+++\n' + setting, 1))
+            resume = json.loads((ROOT / "exampleSite/data/jsonresume/resume.json").read_text())
+            options = resume["meta"]["themeOptions"]
+            options.pop("showTableOfContents", None)
+            if "eventide" in settings:
+                options["showTableOfContents"] = settings["eventide"]
+            pubs = json.loads((ROOT / "exampleSite/data/jsonresume/publications.json").read_text())
+            if settings.get("empty"):
+                options["sections"] = ["projects"]
+                resume["projects"] = []
+                pubs["sections"] = []
+            (data / "resume.json").write_text(json.dumps(resume))
+            (data / "publications.json").write_text(json.dumps(pubs))
+            with tempfile.TemporaryDirectory() as destination:
+                out = Path(destination)
+                build(source, out, "--themesDir", str(ROOT / "exampleSite/themes"))
+                expected = blowfish if integration == "blowfish" else generic
+                for path, enabled in zip(("cv/index.html", "cv/publications/index.html"), expected):
+                    document = (out / path).read_text()
+                    assert document.count('id="TableOfContents"') == int(enabled), (integration, settings, path)
+                    if not enabled:
+                        assert 'class="jsonresume-toc"' not in document
+                        assert 'class="toc ps-5' not in document
+                    if not settings.get("empty"):
+                        assert ('Richard Hendriks' if path == 'cv/index.html' else 'An Example Report') in document
+        print(f"PASS: {integration} TOC precedence, independent pages and empty sections")
+
+
 def main():
     with tempfile.TemporaryDirectory() as destination:
         out = Path(destination)
@@ -136,6 +199,7 @@ def main():
 
     for example, integration in (("exampleSite", "blowfish"), ("exampleGeneric", "generic")):
         check_project_types(example, integration)
+        check_toc_settings(example, integration)
 
     # A sibling fixture preserves the example's relative module/data paths.
     with tempfile.TemporaryDirectory(prefix="jsonresume-test-", dir=ROOT) as fixture:

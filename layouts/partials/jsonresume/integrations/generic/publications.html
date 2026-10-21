@@ -11,7 +11,7 @@
     {{ partial "jsonresume/action-links.html" (dict "links" $data.links "base" $page.RelPermalink "resumeBase" $resumeBase "class" "jsonresume-publications-downloads" "label" "Publication links") }}
   </header>
   <div class="jsonresume-body">
-    {{ with $sections }}<aside class="jsonresume-toc" aria-label="Publication sections">{{ partial "jsonresume/toc-markup.html" . }}</aside>{{ end }}
+    {{ if and $sections (partial "jsonresume/show-toc.html" (dict "page" $page)) }}<aside class="jsonresume-toc" aria-label="Publication sections">{{ partial "jsonresume/toc-markup.html" $sections }}</aside>{{ end }}
     <div class="jsonresume-publications-content">
       {{ $number := 0 }}
       {{ range $sections }}

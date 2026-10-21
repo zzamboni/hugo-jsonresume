@@ -64,7 +64,7 @@
   </article>
   <section class="jsonresume-body flex flex-col max-w-full mt-0 prose dark:prose-invert lg:flex-row">
     {{ $topClass := cond (or (hasPrefix site.Params.header.layout "fixed") (eq site.Params.header.layout "floating")) "lg:top-[140px]" "lg:top-10" }}
-    {{ if $sections }}
+    {{ if and $sections (partial "jsonresume/show-toc.html" (dict "page" $page "options" $options)) }}
       <div class="order-first lg:ms-auto px-0 lg:order-last lg:ps-8 lg:max-w-2xs">
         <div class="toc ps-5 print:hidden lg:sticky {{ $topClass }}">
           {{ partial "toc.html" (dict "TableOfContents" (partial "jsonresume/toc-markup.html" $sections) "Site" site) }}

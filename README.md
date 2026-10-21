@@ -94,8 +94,9 @@ keys stable because `#pub-<key>` anchors are public permalinks.
 
 The renderer can reuse the following [Eventide options](https://github.com/zzamboni/jsonresume-theme-eventide#options)
 from your JSON Resume. These settings belong under `meta.themeOptions` in
-the JSON file, not in Hugo's `params.toml`. Only `sections`, `sectionLabels`
-and `links` are read; the other Eventide settings are ignored.
+the JSON file, not in Hugo's `params.toml`. The renderer reads `sections`,
+`sectionLabels`, `links` and the CV fallback `showTableOfContents`; the other
+Eventide settings are ignored.
 
 | Eventide setting | Support in hugo-jsonresume |
 | --- | --- |
@@ -107,7 +108,7 @@ and `links` are read; the other Eventide settings are ignored.
 | `icons` | Ignored. Does not switch between Font Awesome and Feather. Blowfish uses its SVG assets; generic uses a built-in link symbol and visible profile network names. |
 | `footer_left` | Ignored. Footer content comes from the host site's theme. |
 | `footer_right` | Ignored. Footer content comes from the host site's theme. |
-| `showTableOfContents` | Ignored, including `false`. The renderer supplies a TOC whenever it has nonempty sections. Disabling it requires a template override. |
+| `showTableOfContents` | Supported as the CV fallback when no page, module or applicable theme setting exists. Does not control the separate publications page. See [Table of contents](#table-of-contents). |
 
 ### Section selection and labels
 
@@ -252,6 +253,7 @@ In `config/_default/params.toml`:
 ```toml
 [jsonresume]
   integration = "blowfish" # Default; choose "generic" for other themes.
+  # showTableOfContents = true # Optional module-wide default for both pages.
   resumeData = "jsonresume.resume"
   publicationsData = "jsonresume.publications"
   resumeStem = "example-cv"
@@ -271,6 +273,39 @@ The publications title comes from front matter; an optional
 `publicationsDescription` overrides the page description. No roles are
 excluded by default. Icons use Blowfish names, with common Font Awesome
 aliases and a generic-link fallback for action icons in the Blowfish integration.
+
+### Table of contents
+
+The module generates TOC links from the JSON sections because Hugo's normal
+`.TableOfContents` only contains Markdown headings. Blowfish supplies its TOC
+presentation; the generic integration supplies its own responsive sidebar.
+For either integration, the first **present** setting below decides visibility:
+
+1. The page's front matter `showTableOfContents`.
+2. The host's `[jsonresume].showTableOfContents` in `params.toml` (or
+   `[params.jsonresume]` in `hugo.toml`), applying to both CV and publications.
+3. For Blowfish only, `[article].showTableOfContents` in `params.toml` (or
+   `[params.article]` in `hugo.toml`), including the theme's supplied default.
+4. For the CV only, `meta.themeOptions.showTableOfContents` in the resume JSON.
+5. `true` when none of the above is set.
+
+Use boolean `true` or `false`; explicit `false` is preserved at every level.
+Generic does not guess other themes' TOC settings. Its host can use the module
+setting or page front matter instead. Blowfish's theme default can disable
+the TOC even when Eventide's option is `true`; page or module settings override
+that default. No integration renders a TOC or its sidebar when sections are empty.
+
+For example, add this to the CV or publications page's TOML front matter to
+disable only that page's renderer TOC:
+
+```toml
+showTableOfContents = false
+```
+
+The publications page does not inherit the CV's front matter or Eventide option.
+Both native module layouts and shortcodes use the same rules. A host theme may
+also render its own TOC around a shortcode; these settings control the module's
+TOC, and the host remains responsible for its outer page layout.
 
 ## Using another theme
 
@@ -344,7 +379,7 @@ generic pages load only `css/jsonresume-generic.css`.
 Shared helpers handle data lookup (`data.html`), section selection
 (`cv-sections.html`, `publication-sections.html`), dates, action URL resolution
 and role filtering (`links.html`), publication metadata (`publication-meta.html`),
-and the TOC's section links (`toc-markup.html`). Both integrations also reuse the
+and TOC visibility/section links (`show-toc.html`, `toc-markup.html`). Both integrations also reuse the
 existing semantic entry markup (`entry.html`, `publication-entry.html`) and
 labeled action-link markup (`action-links.html`). Host overrides at these paths
 continue to take precedence.

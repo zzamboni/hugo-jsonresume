@@ -24,7 +24,7 @@
     {{ partial "jsonresume/action-links.html" (dict "links" $resume.meta.themeOptions.links "base" $page.RelPermalink "resumeBase" $resumeBase "class" "jsonresume-actions" "label" "CV links") }}
   </header>
   <div class="jsonresume-body">
-    {{ with $sections }}<aside class="jsonresume-toc" aria-label="CV sections">{{ partial "jsonresume/toc-markup.html" . }}</aside>{{ end }}
+    {{ if and $sections (partial "jsonresume/show-toc.html" (dict "page" $page "options" $resume.meta.themeOptions)) }}<aside class="jsonresume-toc" aria-label="CV sections">{{ partial "jsonresume/toc-markup.html" $sections }}</aside>{{ end }}
     <div class="jsonresume-sections">
       {{ range $sections }}
         <section class="jsonresume-section" id="{{ .id }}" aria-labelledby="{{ .id }}-title">
