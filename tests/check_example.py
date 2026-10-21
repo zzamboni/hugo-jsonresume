@@ -21,10 +21,13 @@ def metadata(document, key):
 def check_contract(out, integration):
     cv = (out / "cv/index.html").read_text()
     pubs = (out / "cv/publications/index.html").read_text()
-    assert "Alex Example" in cv and 'id="projects-software"' in cv
-    assert "Open-source software" in cv and "Example tool" in cv
-    assert 'href="/cv/example-cv.pdf"' in cv and 'href="/cv/example-cv.pdf"' in pubs
-    assert 'href="/cv/publications/"' in cv
+    assert "Richard Hendriks" in cv and 'id="projects-application"' in cv
+    assert 'id="projects-library"' in cv
+    assert "Featured Projects" in cv and "Miss Direction" in cv
+    assert "Open Source" in cv and "Middle-out Compression Toolkit" in cv
+    assert "See full credential list on Credly" in cv
+    assert 'href="https://example.com/richard-hendriks.pdf"' in cv
+    assert 'href="/cv/example-cv.pdf"' in pubs
     assert 'href="/cv/publications/example-pubs.bib"' in pubs
     assert "<resume>" not in cv + pubs and "&lt;resume&gt;" not in cv + pubs
     assert ">Home</span>" not in cv
@@ -39,7 +42,7 @@ def check_contract(out, integration):
     for part in re.findall(r'<div class="jsonresume-pub-meta">(.*?)</div>', pubs, re.S):
         text = html.unescape(re.sub(r"<[^>]+>", "", part)).strip()
         assert not text.startswith("·") and not text.endswith("·")
-    assert "Example City" in cv and "<svg" in cv
+    assert "San Francisco" in cv and "<svg" in cv
     for document in (cv, pubs):
         assert len(re.findall(r"<main(?:\s|>)", document)) == 1
         assert document.count('id="TableOfContents"') == 1
@@ -52,7 +55,7 @@ def check_contract(out, integration):
         assert "dark:prose-invert" not in cv + pubs
         assert "jsonresume-floating-links" not in cv + pubs
         # Generic profile links remain readable even without brand icons.
-        assert '>GitHub</a>' in cv
+        assert '>Twitter</a>' in cv and '>SoundCloud</a>' in cv
         assert "assets/icons/" not in cv + pubs
         for document in (cv, pubs):
             ids = re.findall(r'\bid="([^"]+)"', document)
@@ -92,6 +95,13 @@ def check_project_types(example, integration):
         ]
         resume["work"][0]["type"] = "Not a project type"
         resume["meta"]["themeOptions"]["sections"] = ["work", "projects", "projects:Software"]
+        # Exercise module-specific URLs/roles without altering the exported
+        # Eventide sample's own links and options.
+        resume["meta"]["themeOptions"]["links"] = [
+            {"name": "PDF", "url": "<resume>.pdf", "icon": "download"},
+            {"name": "Publications", "url": "publications/", "icon": "quote-left"},
+            {"name": "Home", "url": "/", "role": "site-home"},
+        ]
         (data / "resume.json").write_text(json.dumps(resume))
         with tempfile.TemporaryDirectory() as destination:
             build(source, Path(destination), "--themesDir", str(ROOT / "exampleSite/themes"))
@@ -104,6 +114,10 @@ def check_project_types(example, integration):
             assert "Typed project" in grouped and 'class="jsonresume-meta"' not in grouped
             assert "Untyped project" in full and "Untyped project" not in grouped
             assert "Not a project type" not in cv
+            assert 'href="/cv/example-cv.pdf"' in cv
+            assert 'href="/cv/publications/"' in cv
+            assert ">Home</span>" not in cv
+            assert "<resume>" not in cv and "&lt;resume&gt;" not in cv
         print(f"PASS: {integration} project type subtitles, grouping and escaping")
 
 

@@ -1,22 +1,287 @@
 {
+  "$schema": "https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json",
   "basics": {
-    "name": "Alex Example",
-    "label": "Systems Engineer",
-    "summary": "Building **reliable** tools and explaining how they work.",
-    "location": {"city": "Example City", "countryCode": "CH"},
-    "profiles": [{"network": "GitHub", "username": "example", "url": "https://github.com/example"}]
-  },
-  "work": [{"name": "Example Lab", "position": "Engineer", "startDate": "2024", "highlights": ["Built reusable publishing tools."]}],
-  "education": [{"institution": "Example University", "area": "Computer Science", "studyType": "MSc", "endDate": "2023"}],
-  "projects": [{"name": "Example tool", "type": "Software", "description": "A reusable tool."}],
-  "publications": [{"name": "Full bibliography", "bibfiles": ["example.bib"]}],
-  "meta": {"themeOptions": {
-    "sections": ["work", "education", "projects:Software", "publications"],
-    "sectionLabels": {"projects:Software": "Open-source software"},
-    "links": [
-      {"name": "PDF", "url": "<resume>.pdf", "icon": "download"},
-      {"name": "Publications", "url": "publications/", "icon": "quote-left"},
-      {"name": "Home", "url": "/", "role": "site-home"}
+    "name": "Richard Hendriks",
+    "label": "Programmer",
+    "image": "https://i.pravatar.cc/300?img=12",
+    "email": "richard.hendriks@mail.com",
+    "phone": "(912) 555-4321",
+    "url": "http://richardhendricks.example.com",
+    "summary": "Richard hails from Tulsa. He has earned degrees from the University of Oklahoma and Stanford. (Go Sooners and Cardinal!) Before starting Pied Piper, he worked for Hooli as a part time software developer. While his work focuses on applied information theory, mostly optimizing lossless compression schema of both the length-limited and adaptive variants, his non-work interests range widely, everything from quantum computing to chaos theory. He could tell you about it, but THAT would NOT be a “length-limited” conversation!",
+    "location": {
+      "address": "2712 Broadway St",
+      "postalCode": "CA 94115",
+      "city": "San Francisco",
+      "countryCode": "US",
+      "region": "California"
+    },
+    "profiles": [
+      {
+        "network": "Twitter",
+        "username": "neutralthoughts",
+        "url": "https://www.twitter.com"
+      },
+      {
+        "network": "SoundCloud",
+        "username": "dandymusicnl",
+        "url": "https://soundcloud.example.com/dandymusicnl"
+      }
     ]
-  }}
+  },
+  "work": [
+    {
+      "name": "Pied Piper",
+      "location": "Palo Alto, CA",
+      "description": "Awesome compression company",
+      "position": "CEO/President",
+      "url": "http://piedpiper.example.com",
+      "startDate": "2013-12-01",
+      "endDate": "2014-12-01",
+      "summary": "Pied Piper is a multi-platform technology based on a proprietary universal compression algorithm that has consistently fielded high Weisman Scores™ that are not merely competitive, but approach the theoretical limit of lossless compression.",
+      "highlights": [
+        "Build an algorithm for artist to detect if their music was violating copy right infringement laws",
+        "Successfully won Techcrunch Disrupt",
+        "Optimized an algorithm that holds the current world record for Weisman Scores"
+      ],
+      "image": "https://placehold.co/300/ffffff/0073aa?text=PP"
+    },
+    {
+      "name": "Pied Piper",
+      "location": "Palo Alto, CA",
+      "description": "Awesome compression company",
+      "position": "Chief Architect",
+      "url": "http://piedpiper.example.com",
+      "startDate": "2012-06-01",
+      "endDate": "2013-11-01",
+      "summary": "Helped shape the early architecture, developer workflows and product direction for Pied Piper.",
+      "highlights": [
+        "Defined the first platform architecture for the compression engine.",
+        "Created the original review process for algorithm changes and performance experiments."
+      ]
+    }
+  ],
+  "volunteer": [
+    {
+      "organization": "CoderDojo",
+      "position": "Teacher",
+      "url": "http://coderdojo.example.com/",
+      "startDate": "2012-01-01",
+      "endDate": "2013-01-01",
+      "summary": "Global movement of free coding clubs for young people.",
+      "highlights": [
+        "Awarded 'Teacher of the Month'"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "University of Oklahoma",
+      "url": "https://www.ou.edu/",
+      "area": "Information Technology",
+      "studyType": "Bachelor",
+      "startDate": "2011-06-01",
+      "endDate": "2014-01-01",
+      "score": "4.0",
+      "courses": [
+        "DB1101 - Basic SQL",
+        "CS2011 - Java Introduction"
+      ],
+      "image": "https://placehold.co/300/darkred/white?text=OU"
+    }
+  ],
+  "awards": [
+    {
+      "title": "Digital Compression Pioneer Award",
+      "date": "2014-11-01",
+      "awarder": "Techcrunch",
+      "summary": "There is no spoon."
+    }
+  ],
+  "certificates": [
+    {
+      "name": "See full credential list on Credly",
+      "url": "https://www.credly.com/"
+    },
+    {
+      "name": "Certified Information Systems Security Professional (CISSP)",
+      "issuer": "ISC2",
+      "date": "2019-04-01",
+      "url": "https://www.isc2.org/certifications/cissp",
+      "image": "https://images.credly.com/images/6eeb0a98-33cb-4f72-bfc3-f89d65a3286c/image.png"
+    }
+  ],
+  "publications": [
+    {
+      "name": "Selected talks and writing archive",
+      "url": "https://example.com/publications"
+    },
+    {
+      "name": "Video compression for 3d media",
+      "publisher": "Hooli",
+      "releaseDate": "2014-10-01",
+      "url": "http://en.wikipedia.org/wiki/Silicon_Valley_(TV_series)",
+      "summary": "Innovative middle-out compression algorithm that changes the way we store data."
+    }
+  ],
+  "skills": [
+    {
+      "name": "Web Development",
+      "level": "Master",
+      "keywords": [
+        "HTML",
+        "CSS",
+        "Javascript"
+      ]
+    },
+    {
+      "name": "Compression",
+      "level": "Master",
+      "keywords": [
+        "Mpeg",
+        "MP4",
+        "GIF"
+      ]
+    }
+  ],
+  "languages": [
+    {
+      "language": "English",
+      "fluency": "Native speaker"
+    }
+  ],
+  "interests": [
+    {
+      "name": "Wildlife",
+      "keywords": [
+        "Ferrets",
+        "Unicorns"
+      ]
+    }
+  ],
+  "references": [
+    {
+      "name": "Erlich Bachman",
+      "reference": "It is my pleasure to recommend Richard, his performance working as a consultant for Main St. Company proved that he will be a valuable addition to any company."
+    }
+  ],
+  "projects": [
+    {
+      "name": "Miss Direction",
+      "description": "A mapping engine that misguides you",
+      "highlights": [
+        "Won award at AIHacks 2016",
+        "Built by all women team of newbie programmers",
+        "Using modern technologies such as GoogleMaps, Chrome Extension and Javascript"
+      ],
+      "keywords": [
+        "GoogleMaps",
+        "Chrome Extension",
+        "Javascript"
+      ],
+      "startDate": "2016-08-24",
+      "endDate": "2016-08-24",
+      "url": "http://missdirection.example.com",
+      "roles": [
+        "Team lead",
+        "Designer"
+      ],
+      "entity": "Smoogle",
+      "type": "application"
+    },
+    {
+      "name": "Middle-out Compression Toolkit",
+      "description": "Reference implementation and testing helpers for the Pied Piper compression pipeline.",
+      "highlights": [
+        "Packaged benchmarking fixtures for repeatable algorithm experiments.",
+        "Documented integration patterns for application teams."
+      ],
+      "keywords": [
+        "Node.js",
+        "Benchmarking",
+        "Compression"
+      ],
+      "startDate": "2015-01-15",
+      "endDate": "2016-02-01",
+      "url": "https://example.com/middle-out-toolkit",
+      "roles": [
+        "Maintainer"
+      ],
+      "entity": "Pied Piper",
+      "type": "library"
+    },
+    {
+      "description": "Additional selected projects and demos are available online.",
+      "type": "application"
+    }
+  ],
+  "meta": {
+    "canonical": "https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/sample.resume.json",
+    "version": "v1.0.0",
+    "lastModified": "2017-12-24T15:53:00",
+    "themeOptions": {
+      "colors": {
+        "background": [
+          "#ffffff",
+          "#191e23"
+        ],
+        "dimmed": [
+          "#f3f4f5",
+          "#23282d"
+        ],
+        "primary": [
+          "#191e23",
+          "#fbfbfc"
+        ],
+        "secondary": [
+          "#6c7781",
+          "#ccd0d4"
+        ],
+        "accent": [
+          "#0073aa",
+          "#00a0d2"
+        ]
+      },
+      "icons": "fontawesome",
+      "projectsByType": true,
+      "showTableOfContents": true,
+      "sections": [
+        "work",
+        "volunteer",
+        "education",
+        "projects:application",
+        "projects:library",
+        "awards",
+        "certificates",
+        "publications",
+        "skills",
+        "languages",
+        "interests",
+        "references"
+      ],
+      "sectionLabels": {
+        "work": "Experience",
+        "projects:application": "Featured Projects",
+        "projects:library": "Open Source"
+      },
+      "links": [
+        {
+          "name": "Portfolio",
+          "url": "https://example.com/richard-hendriks",
+          "icon": "globe"
+        },
+        {
+          "name": "PDF",
+          "url": "https://example.com/richard-hendriks.pdf",
+          "icon": "file-pdf"
+        },
+        {
+          "name": "GitHub",
+          "url": "https://github.com/piedpiper",
+          "icon": "github"
+        }
+      ],
+      "footer_left": "© Richard Hendriks 2026",
+      "footer_right": "Powered by [Eventide](https://github.com/zzamboni/jsonresume-theme-eventide)"
+    }
+  }
 }

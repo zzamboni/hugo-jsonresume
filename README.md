@@ -376,6 +376,15 @@ hugo server --source exampleGeneric
 Both expose `/cv/` and `/cv/publications/`. Their data is shared from
 `exampleSite/data/`; illustrative download links do not point to generated PDFs.
 
+`exampleSite/data/jsonresume/resume.json` is a JSON export of Eventide's
+[editor sample](https://github.com/zzamboni/jsonresume-theme-eventide/blob/main/editor/sample-resume.js)
+(source blob `f11011f304dceda578b5ae7b8ec68eaff8839627`), using the
+`@jsonresume/schema` **1.3.1** sample selected by Eventide's lockfile. It preserves
+the editor's fictional Richard Hendriks data, remote image URLs and all
+`meta.themeOptions`, including options this module ignores. Serving the example
+loads those remote images in the browser. The separate normalized bibliography
+remains a synthetic fixture for testing publication metadata and fallbacks.
+
 Both examples' Go replacements point to this checkout for development; examples
 are not mounted into consuming sites. Run `python3 tests/check_example.py` after
 cloning Blowfish. The checks build both integrations and cover routes, sections,
