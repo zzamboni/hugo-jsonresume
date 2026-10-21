@@ -26,7 +26,7 @@ def check_contract(out, integration):
     assert "Featured Projects" in cv and "Miss Direction" in cv
     assert "Open Source" in cv and "Middle-out Compression Toolkit" in cv
     assert "See full credential list on Credly" in cv
-    assert 'href="https://example.com/richard-hendriks.pdf"' in cv
+    assert 'href="/cv/publications/"' in cv
     assert 'href="/cv/example-cv.pdf"' in pubs
     assert 'href="/cv/publications/example-pubs.bib"' in pubs
     assert "<resume>" not in cv + pubs and "&lt;resume&gt;" not in cv + pubs
