@@ -1,0 +1,16 @@
+{{- /* Check presence rather than using default, which discards explicit false. */ -}}
+{{- $page := .page -}}
+{{- $module := site.Params.jsonresume | default dict -}}
+{{- $article := site.Params.article | default dict -}}
+{{- $options := .options | default dict -}}
+{{- $show := true -}}
+{{- if isset $page.Params "showtableofcontents" -}}
+  {{- $show = $page.Params.showTableOfContents -}}
+{{- else if isset $module "showtableofcontents" -}}
+  {{- $show = $module.showTableOfContents -}}
+{{- else if and (eq (partial "jsonresume/integration.html" $page) "blowfish") (isset $article "showtableofcontents") -}}
+  {{- $show = $article.showTableOfContents -}}
+{{- else if isset $options "showTableOfContents" -}}
+  {{- $show = $options.showTableOfContents -}}
+{{- end -}}
+{{- return $show -}}

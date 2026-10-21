@@ -1,0 +1,15 @@
+{{- /* Both renderers use the same role filtering and host-owned download URLs. */ -}}
+{{- $excluded := site.Params.jsonresume.excludeLinkRoles | default (slice) -}}
+{{- $visible := slice -}}
+{{- $base := .base -}}
+{{- $resumeBase := .resumeBase | default $base -}}
+{{- range (.links | default (slice)) -}}
+  {{- if not (in $excluded (.role | default "")) -}}
+    {{- $href := replace (.url | default "") "<resume>" $resumeBase -}}
+    {{- if and $href (not (or (hasPrefix $href "/") (hasPrefix $href "https://") (hasPrefix $href "http://"))) -}}
+      {{- $href = printf "%s%s" $base $href -}}
+    {{- end -}}
+    {{- $visible = $visible | append (merge (dict "href" $href) .) -}}
+  {{- end -}}
+{{- end -}}
+{{- return $visible -}}

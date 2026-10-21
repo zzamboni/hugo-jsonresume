@@ -1,0 +1,28 @@
+{{ $page := . }}
+{{ $data := partial "jsonresume/data.html" (site.Params.jsonresume.publicationsData | default "jsonresume.publications") }}
+{{ $sections := partial "jsonresume/publication-sections.html" $data }}
+{{ $resumeBase := printf "%s%s" $page.Parent.RelPermalink (site.Params.jsonresume.resumeStem | default "") }}
+{{ $css := resources.Get "css/jsonresume-generic.css" | minify | fingerprint }}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}">
+<article class="jsonresume-generic jsonresume-publications">
+  <header>
+    <h1>{{ $page.Title }}</h1>
+    {{ with site.Params.jsonresume.publicationsDescription | default $page.Description }}<p class="jsonresume-meta">{{ . }}</p>{{ end }}
+    {{ partial "jsonresume/action-links.html" (dict "links" $data.links "base" $page.RelPermalink "resumeBase" $resumeBase "class" "jsonresume-publications-downloads" "label" "Publication links") }}
+  </header>
+  <div class="jsonresume-body">
+    {{ if and $sections (partial "jsonresume/show-toc.html" (dict "page" $page)) }}<aside class="jsonresume-toc" aria-label="Publication sections">{{ partial "jsonresume/toc-markup.html" $sections }}</aside>{{ end }}
+    <div class="jsonresume-publications-content">
+      {{ $number := 0 }}
+      {{ range $sections }}
+        <section class="jsonresume-pub-section" aria-labelledby="{{ .id }}-title">
+          <h2 id="{{ .id }}-title"><span id="{{ .id }}" class="anchor"></span>{{ .label | markdownify }}</h2>
+          {{ range .entries }}
+            {{ $number = add $number 1 }}
+            {{ partial "jsonresume/publication-entry.html" (dict "entry" . "number" $number) }}
+          {{ end }}
+        </section>
+      {{ end }}
+    </div>
+  </div>
+</article>

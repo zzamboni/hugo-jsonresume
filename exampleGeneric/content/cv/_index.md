@@ -1,0 +1,5 @@
++++
+title = "Curriculum Vitae"
++++
+
+{{< jsonresume >}}

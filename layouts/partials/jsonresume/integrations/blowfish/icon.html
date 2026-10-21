@@ -1,0 +1,8 @@
+{{- /* Preserve native Blowfish names and the existing Font Awesome aliases. */ -}}
+{{- $requested := lower (. | default "link") -}}
+{{- $aliases := dict "fa-regular fa-file-pdf" "download" "fa-file-pdf" "download" "fa-regular fa-house" "link" "fa-house" "link" "fa-quote-left" "quote-left" "fa-file-lines" "file-lines" -}}
+{{- $icon := index $aliases $requested | default $requested -}}
+{{- if not (resources.Get (printf "icons/%s.svg" $icon)) -}}
+  {{- $icon = "link" -}}
+{{- end -}}
+{{- partial "icon.html" $icon -}}

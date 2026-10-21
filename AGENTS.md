@@ -1,10 +1,13 @@
 # Development guidance
 
-- This is a Blowfish-specific Hugo Module. Keep the host's content, personal
-  data, download filenames, routing policy and publishing workflows outside it.
+- This Hugo Module has Blowfish (default) and generic integrations. Keep the
+  host's content, personal data, download filenames, routing policy and
+  publishing workflows outside it.
 - Preserve the renderer's public template paths, CSS names, data contract and
   publication anchors. Document intentional behavior changes in README.md.
 - Keep exampleSite synthetic and runnable with the pinned Blowfish version.
+- Keep exampleGeneric runnable without Blowfish or another theme. Integrations
+  own page layouts/CSS/icons; share data and link/metadata helpers where useful.
 - Run `python3 tests/check_example.py` with Hugo Extended and Go installed.
   Set HUGO_BIN to an alternate Hugo executable when necessary.
 - Use ordinary descriptive commits for collaborative work. Reserve `auto:`

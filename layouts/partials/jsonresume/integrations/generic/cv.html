@@ -1,0 +1,39 @@
+{{ $page := . }}
+{{ $resume := partial "jsonresume/data.html" (site.Params.jsonresume.resumeData | default "jsonresume.resume") }}
+{{ $sections := partial "jsonresume/cv-sections.html" $resume }}
+{{ $resumeBase := printf "%s%s" $page.RelPermalink (site.Params.jsonresume.resumeStem | default "") }}
+{{ $publicationsURL := site.Params.jsonresume.publicationsURL | default (printf "%spublications/" $page.RelPermalink) }}
+{{ $css := resources.Get "css/jsonresume-generic.css" | minify | fingerprint }}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}">
+<div id="vita" class="jsonresume-generic jsonresume-page">
+  <header class="jsonresume-profile">
+    {{ with $resume.basics.image }}<img class="jsonresume-portrait" src="{{ . | safeURL }}" alt="{{ $resume.basics.name }}" width="144" height="144" loading="eager">{{ end }}
+    <h1>{{ $resume.basics.name | markdownify }}</h1>
+    {{ with $resume.basics.label }}<p class="jsonresume-label">{{ . | markdownify }}</p>{{ end }}
+    {{ with $resume.basics.location }}
+      {{ $location := slice }}
+      {{ with .city }}{{ $location = $location | append . }}{{ end }}
+      {{ with .countryCode }}{{ $location = $location | append . }}{{ end }}
+      {{ with $location }}<p class="jsonresume-meta">{{ delimit . ", " }}</p>{{ end }}
+    {{ end }}
+    <ul class="jsonresume-profiles">
+      {{ with $resume.basics.email }}<li><a href="mailto:{{ . }}">{{ . }}</a></li>{{ end }}
+      {{ range $resume.basics.profiles }}<li><a href="{{ .url | safeURL }}" rel="me">{{ .network | default .username }}</a></li>{{ end }}
+    </ul>
+    {{ with $resume.basics.summary }}<div class="jsonresume-summary">{{ . | markdownify }}</div>{{ end }}
+    {{ partial "jsonresume/action-links.html" (dict "links" $resume.meta.themeOptions.links "base" $page.RelPermalink "resumeBase" $resumeBase "class" "jsonresume-actions" "label" "CV links") }}
+  </header>
+  <div class="jsonresume-body">
+    {{ if and $sections (partial "jsonresume/show-toc.html" (dict "page" $page "options" $resume.meta.themeOptions)) }}<aside class="jsonresume-toc" aria-label="CV sections">{{ partial "jsonresume/toc-markup.html" $sections }}</aside>{{ end }}
+    <div class="jsonresume-sections">
+      {{ range $sections }}
+        <section class="jsonresume-section" id="{{ .id }}" aria-labelledby="{{ .id }}-title">
+          <h2 id="{{ .id }}-title">{{ .label | markdownify }}</h2>
+          <div class="jsonresume-section-content">
+            {{ $key := .key }}{{ range .entries }}{{ partial "jsonresume/entry.html" (dict "entry" . "section" $key "publicationsURL" $publicationsURL) }}{{ end }}
+          </div>
+        </section>
+      {{ end }}
+    </div>
+  </div>
+</div>

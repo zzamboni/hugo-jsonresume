@@ -1,0 +1,6 @@
+{{- /* Explicit selection keeps theme-specific assumptions out of shared helpers. */ -}}
+{{- $integration := site.Params.jsonresume.integration | default "blowfish" -}}
+{{- if not (in (slice "blowfish" "generic") $integration) -}}
+  {{- errorf "jsonresume: unknown integration %q; choose blowfish or generic" $integration -}}
+{{- end -}}
+{{- return $integration -}}
