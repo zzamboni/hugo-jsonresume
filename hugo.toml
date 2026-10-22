@@ -10,3 +10,6 @@
   [[module.mounts]]
     source = "assets"
     target = "assets"
+  [[module.mounts]]
+    source = "i18n"
+    target = "i18n"

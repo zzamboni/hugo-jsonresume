@@ -254,6 +254,7 @@ In `config/_default/params.toml`:
 [jsonresume]
   integration = "blowfish" # Default; choose "generic" for other themes.
   # showTableOfContents = true # Optional module-wide default for both pages.
+  # showAttribution = false # Hide the module credit on both pages.
   resumeData = "jsonresume.resume"
   publicationsData = "jsonresume.publications"
   resumeStem = "example-cv"
@@ -273,6 +274,25 @@ The publications title comes from front matter; an optional
 `publicationsDescription` overrides the page description. No roles are
 excluded by default. Icons use Blowfish names, with common Font Awesome
 aliases and a generic-link fallback for action icons in the Blowfish integration.
+
+### Attribution
+
+CV and publications render a small “Rendered with hugo-jsonresume” link below
+their content by default. It is hidden when printing, works with both
+integrations and shortcodes, and leaves the host theme's footer unchanged.
+
+To hide it on an individual page, add this to its TOML front matter:
+
+```toml
+showAttribution = false
+```
+
+The page's explicit boolean takes precedence over `[jsonresume].showAttribution`
+in `params.toml` (or `[params.jsonresume]` in `hugo.toml`). The default is `true`;
+the publications page does not inherit the CV's front matter. Hosts can translate
+or customize the wording through the `jsonresume_attribution` i18n key, whose
+`{{ .Module }}` value contains the module link. If no translation is available
+for the current or default content language, the credit falls back to English.
 
 ### Table of contents
 

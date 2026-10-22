@@ -1,2 +1,3 @@
 {{- $integration := partial "jsonresume/integration.html" . -}}
 {{- partial (printf "jsonresume/integrations/%s/publications.html" $integration) . -}}
+{{- partial "jsonresume/attribution.html" . -}}
