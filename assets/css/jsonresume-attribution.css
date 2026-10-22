@@ -1,0 +1,10 @@
+.jsonresume-attribution {
+  margin-block: 2rem 0;
+  font-size: .75rem;
+  text-align: center;
+  opacity: .75;
+}
+.jsonresume-attribution a { color: inherit; text-decoration: underline; text-underline-offset: .15em; }
+@media print {
+  .jsonresume-attribution { display: none !important; }
+}

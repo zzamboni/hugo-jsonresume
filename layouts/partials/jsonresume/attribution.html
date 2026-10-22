@@ -1,0 +1,13 @@
+{{- $show := true -}}
+{{- $module := site.Params.jsonresume | default dict -}}
+{{- if isset .Params "showattribution" -}}
+  {{- $show = .Params.showAttribution -}}
+{{- else if isset $module "showattribution" -}}
+  {{- $show = $module.showAttribution -}}
+{{- end -}}
+{{- if $show -}}
+  {{- $css := resources.Get "css/jsonresume-attribution.css" | minify | fingerprint -}}
+  <link rel="stylesheet" href="{{ $css.RelPermalink }}">
+  {{- $link := `<a href="https://github.com/zzamboni/hugo-jsonresume" rel="noopener noreferrer" target="_blank">hugo-jsonresume</a>` -}}
+  <p class="jsonresume-attribution">{{ i18n "jsonresume_attribution" (dict "Module" $link) | safeHTML }}</p>
+{{- end }}

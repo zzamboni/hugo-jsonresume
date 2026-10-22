@@ -46,7 +46,13 @@ def check_contract(out, integration):
     for document in (cv, pubs):
         assert len(re.findall(r"<main(?:\s|>)", document)) == 1
         assert document.count('id="TableOfContents"') == 1
+        assert document.count('class="jsonresume-attribution"') == 1
+        assert 'Rendered with <a href="https://github.com/zzamboni/hugo-jsonresume"' in document
     css = list((out / "css").glob("jsonresume*.css"))
+    attribution = [path for path in css if path.name.startswith("jsonresume-attribution.")]
+    assert len(attribution) == 1
+    assert '@media print{.jsonresume-attribution{display:none!important}}' in attribution[0].read_text()
+    css = [path for path in css if path not in attribution]
     if integration == "blowfish":
         assert len(css) == 3, css
         assert "jsonresume-generic" not in cv + pubs
@@ -184,6 +190,35 @@ def check_toc_settings(example, integration):
         print(f"PASS: {integration} TOC precedence, independent pages and empty sections")
 
 
+def check_attribution_settings(example, integration):
+    with tempfile.TemporaryDirectory(prefix="jsonresume-test-", dir=ROOT) as fixture:
+        source = Path(fixture)
+        shutil.copytree(ROOT / example, source, dirs_exist_ok=True,
+                        ignore=shutil.ignore_patterns("themes", "resources", "public"))
+        config = source / "hugo.toml"
+        original_config = config.read_text()
+        pages = [source / "content/cv/_index.md", source / "content/cv/publications/index.md"]
+        originals = [page.read_text() for page in pages]
+        # False must survive defaulting, and either page can override the module.
+        for module, cv, pubs, expected in (
+            (False, None, None, (False, False)),
+            (False, True, None, (True, False)),
+            (True, False, True, (False, True)),
+        ):
+            config.write_text(re.sub(r'(\[params\.jsonresume\])',
+                                    r'\1\nshowAttribution = ' + str(module).lower(), original_config))
+            for page, original, setting in zip(pages, originals, (cv, pubs)):
+                value = '' if setting is None else f'showAttribution = {str(setting).lower()}\n'
+                page.write_text(original.replace('+++\n', '+++\n' + value, 1))
+            with tempfile.TemporaryDirectory() as destination:
+                out = Path(destination)
+                build(source, out, "--themesDir", str(ROOT / "exampleSite/themes"))
+                for path, enabled in zip(("cv/index.html", "cv/publications/index.html"), expected):
+                    document = (out / path).read_text()
+                    assert document.count('class="jsonresume-attribution"') == int(enabled), (integration, path, expected)
+        print(f"PASS: {integration} attribution defaults, page overrides and print stylesheet")
+
+
 def main():
     with tempfile.TemporaryDirectory() as destination:
         out = Path(destination)
@@ -200,6 +235,7 @@ def main():
     for example, integration in (("exampleSite", "blowfish"), ("exampleGeneric", "generic")):
         check_project_types(example, integration)
         check_toc_settings(example, integration)
+        check_attribution_settings(example, integration)
 
     # A sibling fixture preserves the example's relative module/data paths.
     with tempfile.TemporaryDirectory(prefix="jsonresume-test-", dir=ROOT) as fixture:

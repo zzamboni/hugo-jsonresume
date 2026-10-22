@@ -1,0 +1,2 @@
+jsonresume_attribution:
+  other: "Rendered with {{ .Module }}"
