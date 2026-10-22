@@ -43,6 +43,11 @@
 .jsonresume-generic .jsonresume-meta { opacity: .75; font-size: .9em; margin-block: .35rem .65rem; }
 .jsonresume-generic .jsonresume-description { margin-block: .65rem; }
 .jsonresume-generic .jsonresume-description p { margin-block: .4rem; }
+/* The first text starts at the marker even when there is no heading. */
+.jsonresume-generic .jsonresume-entry > :first-child,
+.jsonresume-generic .jsonresume-entry > .jsonresume-entry-logo + *,
+.jsonresume-generic .jsonresume-entry > .jsonresume-description:first-child > :first-child,
+.jsonresume-generic .jsonresume-entry > .jsonresume-entry-logo + .jsonresume-description > :first-child { margin-block-start: 0; }
 .jsonresume-generic .jsonresume-highlights { list-style: disc; padding-inline-start: 1.3rem; }
 .jsonresume-generic .jsonresume-tags { display: flex; flex-wrap: wrap; list-style: none; gap: .45rem; padding: 0; }
 .jsonresume-generic .jsonresume-tags li { background: var(--jsonresume-surface, rgb(128 128 128 / .13)); border-radius: .4rem; padding: .2rem .55rem; font-size: .85em; }
