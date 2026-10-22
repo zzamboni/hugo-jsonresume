@@ -3,7 +3,12 @@
 :CUSTOM_ID: json-resume-in-hugo
 :END:
 
-Render [[https://jsonresume.org/][JSON Resume]] and an optional bibliography inside a Hugo site. The Hugo [[https://blowfish.page/][Blowfish theme]] is supported natively, retaining its typography, icons, breadcrumbs and table of contents. A *generic integration* supplies scoped CSS and labeled links for other themes, without theme-specific features. This is a [[https://gohugo.io/hugo-modules/][Hugo Module]], not a standalone theme. It is inspired by [[https://github.com/zzamboni/jsonresume-theme-eventide][Eventide]] but does not depend on it. It can work in conjunction with [[https://github.com/zzamboni/resume-toolkit][resume-toolkit]] (e.g. linking to generated PDF/BibTeX files).
+Render [[https://jsonresume.org/][JSON Resume]] and an optional bibliography inside a Hugo site. The Hugo [[https://blowfish.page/][Blowfish theme]] is supported natively by default, retaining its typography, icons, breadcrumbs and table of contents. A generic integration is provided for use with other themes. This is a [[https://gohugo.io/hugo-modules/][Hugo Module]], not a standalone theme. It is inspired by [[https://github.com/zzamboni/jsonresume-theme-eventide][Eventide]] but does not depend on it. It can work in conjunction with [[https://github.com/zzamboni/resume-toolkit][resume-toolkit]] (e.g. linking to generated PDF/BibTeX files).
+
+#+begin_quote
+[!TIP]
+Live example: https://zzamboni.org/vita/
+#+end_quote
 
 ** Requirements and installation
 :PROPERTIES:
@@ -330,7 +335,7 @@ Shared helpers handle data lookup (=data.html=), section selection (=cv-sections
 There is no theme detection or adapter registration framework. A future supported theme can add its own integration when there is a concrete need. Generic support is an embedding option, not a promise of automatic visual matching for all themes.
 
 #+begin_quote
-[!TIP]
+[!NOTE]
 If you create a new custom integration for a theme, please [[https://github.com/zzamboni/hugo-jsonresume/pulls][contribute it]]!
 #+end_quote
 
