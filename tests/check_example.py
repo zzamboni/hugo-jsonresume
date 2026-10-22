@@ -219,6 +219,32 @@ def check_attribution_settings(example, integration):
         print(f"PASS: {integration} attribution defaults, page overrides and print stylesheet")
 
 
+def check_attribution_languages(example, integration):
+    with tempfile.TemporaryDirectory(prefix="jsonresume-test-", dir=ROOT) as fixture:
+        source = Path(fixture)
+        shutil.copytree(ROOT / example, source, dirs_exist_ok=True,
+                        ignore=shutil.ignore_patterns("themes", "resources", "public"))
+        config = source / "hugo.toml"
+        config.write_text('defaultContentLanguage = "de"\n' + config.read_text()
+                          .replace('locale = "en"', 'locale = "de"')
+                          .replace('languageCode = "en"', 'languageCode = "de"'))
+        translations = source / "i18n"
+        translations.mkdir(exist_ok=True)
+        for translated, prefix in ((False, "Rendered with"), (True, "Erstellt mit")):
+            if translated:
+                (translations / "de.yaml").write_text(
+                    'jsonresume_attribution:\n  other: "Erstellt mit {{ .Module }}"\n')
+            with tempfile.TemporaryDirectory() as destination:
+                out = Path(destination)
+                build(source, out, "--themesDir", str(ROOT / "exampleSite/themes"))
+                for path in ("cv/index.html", "cv/publications/index.html"):
+                    document = (out / path).read_text()
+                    credit = re.search(r'<p class="jsonresume-attribution">(.*?)</p>', document, re.S)
+                    assert credit and prefix in credit[1], (integration, translated, path)
+                    assert 'href="https://github.com/zzamboni/hugo-jsonresume"' in credit[1]
+        print(f"PASS: {integration} non-English default language fallback and host translation")
+
+
 def main():
     with tempfile.TemporaryDirectory() as destination:
         out = Path(destination)
@@ -236,6 +262,7 @@ def main():
         check_project_types(example, integration)
         check_toc_settings(example, integration)
         check_attribution_settings(example, integration)
+        check_attribution_languages(example, integration)
 
     # A sibling fixture preserves the example's relative module/data paths.
     with tempfile.TemporaryDirectory(prefix="jsonresume-test-", dir=ROOT) as fixture:

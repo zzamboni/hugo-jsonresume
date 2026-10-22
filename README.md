@@ -291,7 +291,8 @@ The page's explicit boolean takes precedence over `[jsonresume].showAttribution`
 in `params.toml` (or `[params.jsonresume]` in `hugo.toml`). The default is `true`;
 the publications page does not inherit the CV's front matter. Hosts can translate
 or customize the wording through the `jsonresume_attribution` i18n key, whose
-`{{ .Module }}` value contains the module link.
+`{{ .Module }}` value contains the module link. If no translation is available
+for the current or default content language, the credit falls back to English.
 
 ### Table of contents
 

@@ -9,5 +9,9 @@
   {{- $css := resources.Get "css/jsonresume-attribution.css" | minify | fingerprint -}}
   <link rel="stylesheet" href="{{ $css.RelPermalink }}">
   {{- $link := `<a href="https://github.com/zzamboni/hugo-jsonresume" rel="noopener noreferrer" target="_blank">hugo-jsonresume</a>` -}}
-  <p class="jsonresume-attribution">{{ i18n "jsonresume_attribution" (dict "Module" $link) | safeHTML }}</p>
+  {{- $text := i18n "jsonresume_attribution" (dict "Module" $link) -}}
+  {{- if not $text -}}
+    {{- $text = printf "Rendered with %s" $link -}}
+  {{- end -}}
+  <p class="jsonresume-attribution">{{ $text | safeHTML }}</p>
 {{- end }}
