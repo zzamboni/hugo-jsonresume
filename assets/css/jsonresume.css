@@ -18,6 +18,12 @@
 .jsonresume-meta { font-size:.87rem; opacity:.7; margin:.35rem 0 .65rem; }
 .jsonresume-description { line-height:1.65; margin:.65rem 0; }
 .jsonresume-description p { margin:.4rem 0; }
+/* Align the first text with the marker, including entries without headings.
+   A floated logo may precede the text; Markdown adds an inner paragraph. */
+.jsonresume-page .jsonresume-entry > :first-child,
+.jsonresume-page .jsonresume-entry > .jsonresume-entry-logo + *,
+.jsonresume-page .jsonresume-entry > .jsonresume-description:first-child > :first-child,
+.jsonresume-page .jsonresume-entry > .jsonresume-entry-logo + .jsonresume-description > :first-child { margin-top:0; }
 .jsonresume-highlights { margin:.65rem 0; padding-left:1.3rem; list-style:disc; line-height:1.65; }
 .jsonresume-highlights li { margin:.4rem 0; }
 .jsonresume-tags { display:flex; flex-wrap:wrap; list-style:none; gap:.45rem; padding:0; margin:.65rem 0; }

@@ -243,7 +243,8 @@ Eventide also supports extensions on individual entries, outside
 
 Notes use the normal entry layout and stay in input order. In particular,
 certificate and publication notes are not moved ahead of other entries as
-they are in Eventide. These compatibility notes describe presentation
+they are in Eventide. Entries without headings align their first text with
+the entry marker. These compatibility notes describe presentation
 extensions, not complete parity with every JSON Resume field Eventide renders.
 
 ## Configuration
