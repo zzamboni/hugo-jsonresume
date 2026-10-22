@@ -330,7 +330,7 @@ Shared helpers handle data lookup (=data.html=), section selection (=cv-sections
 There is no theme detection or adapter registration framework. A future supported theme can add its own integration when there is a concrete need. Generic support is an embedding option, not a promise of automatic visual matching for all themes.
 
 #+begin_quote
-*Tip* \\
+[!TIP]
 If you create a new custom integration for a theme, please [[https://github.com/zzamboni/hugo-jsonresume/pulls][contribute it]]!
 #+end_quote
 
