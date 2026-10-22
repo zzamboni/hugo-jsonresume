@@ -1,0 +1,368 @@
+* JSON Resume in Hugo
+:PROPERTIES:
+:CUSTOM_ID: json-resume-in-hugo
+:END:
+
+Render [[https://jsonresume.org/][JSON Resume]] and an optional bibliography inside a Hugo site. The Hugo [[https://blowfish.page/][Blowfish theme]] is supported natively, retaining its typography, icons, breadcrumbs and table of contents. A *generic integration* supplies scoped CSS and labeled links for other themes, without theme-specific features. This is a [[https://gohugo.io/hugo-modules/][Hugo Module]], not a standalone theme. It is inspired by [[https://github.com/zzamboni/jsonresume-theme-eventide][Eventide]] but does not depend on it. It can work in conjunction with [[https://github.com/zzamboni/resume-toolkit][resume-toolkit]] (e.g. linking to generated PDF/BibTeX files).
+
+** Requirements and installation
+:PROPERTIES:
+:CUSTOM_ID: requirements-and-installation
+:END:
+
+Tested with Hugo Extended *0.166.0*, Blowfish *v3.8.0*, and Go *1.25.1*. Install Go to resolve Hugo Modules. Keep the existing theme setup; the module does not import a theme. The generic example needs no theme installed.
+
+From a Hugo site, initialize Go module metadata if it is not already present (see the [[https://gohugo.io/hugo-modules/use-modules/][Hugo documentation for full details on using modules]]):
+
+#+begin_src sh
+hugo mod init github.com/example/my-site
+#+end_src
+
+Add to =config/_default/module.toml=:
+
+#+begin_src toml
+[[imports]]
+path = "github.com/zzamboni/hugo-jsonresume"
+#+end_src
+
+The module will be downloaded and installed the next time =hugo= runs. This will create or update the =go.mod= and =go.sum= files to reflect the specific version being used.
+
+** Content and data
+:PROPERTIES:
+:CUSTOM_ID: content-and-data
+:END:
+
+You choose where to publish the CV in your Hugo site by specifying frontmatter values for =type= and =layout=. For example, in =content/cv/_index.md=:
+
+#+begin_src toml
++++
+title = "Curriculum Vitae"
+type = "jsonresume"
+layout = "cv"
++++
+#+end_src
+
+If you want to publish a bibliography page as well, create =content/cv/publications/index.md=:
+
+#+begin_src toml
++++
+title = "Publications"
+description = "Selected publications and talks."
+type = "jsonresume"
+layout = "publications"
++++
+#+end_src
+
+In this case, the publications page is a child of the CV page. The layout supplies its own TOC by default, this can be disabled by setting the appropriate theme options (e.g. =showTableOfContents= in Blowfish).
+
+Place your JSON Resume at =data/jsonresume/resume.json=. Descriptions, summaries, entry titles and highlights support Markdown. See [[#eventide-option-compatibility][Eventide option compatibility]] for the supported presentation options and differences from Eventide.
+
+The bibliography input is *normalized JSON*, not raw BibTeX.  [[https://github.com/zzamboni/resume-toolkit][resume-toolkit]] can generate this format from BibTeX. For example:
+
+#+begin_src json
+{
+   "links" : [],
+   "sections" : [
+      {
+         "entries" : [
+            {
+               "authors" : "Alex Example",
+               "institution" : "Example Lab",
+               "key" : "example-report",
+               "number" : "R1",
+               "title" : "An Example Report",
+               "type" : "Research Report",
+               "year" : 2026
+            }
+         ],
+         "id" : "reports",
+         "title" : "Reports"
+      }
+   ]
+}
+#+end_src
+
+Store it at =data/jsonresume/publications.json=. Entries support =url=, =editor=, =doi=, =note=, and publication venue fields in this order of precedence: =journal=, =booktitle=, =publisher=, =school=, =institution=, =howpublished=. =type= and =number= are rendered together. Keep entry keys stable because =#pub-<key>= anchors are public permalinks.
+
+** Eventide option compatibility
+:PROPERTIES:
+:CUSTOM_ID: eventide-option-compatibility
+:END:
+
+The renderer can reuse the following [[https://github.com/zzamboni/jsonresume-theme-eventide#options][Eventide options]] from your JSON Resume. These settings belong under =meta.themeOptions= in the JSON file, not in Hugo's =params.toml=.
+
+| Eventide setting      | Support in hugo-jsonresume                                                                                                                                                            |
+|-----------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =sections=            | Supported. Selects and orders CV sections, including explicit =projects:<type>= groups. Defaults differ from Eventide; see below.                                                     |
+| =sectionLabels=       | Supported. Changes section headings using the exact section identifier as the key. Labels support Markdown.                                                                           |
+| =links=               | Supported with differences. Supplies labeled action links in both integrations and desktop floating shortcuts in Blowfish. Icons and URL placeholders differ; see below.              |
+| =projectsByType=      | Ignored. Does not automatically group projects. Use =projects:<type>= identifiers in =sections= instead.                                                                              |
+| =colors=              | Ignored. Blowfish uses the host's palette and light/dark mode; generic inherits host colors and supports its own CSS variables.                                                       |
+| =icons=               | Ignored. Does not switch between Font Awesome and Feather. Blowfish uses its SVG assets; generic uses a built-in link symbol and visible profile network names.                       |
+| =footer_left=         | Ignored. Footer content comes from the host site's theme.                                                                                                                             |
+| =footer_right=        | Ignored. Footer content comes from the host site's theme.                                                                                                                             |
+| =showTableOfContents= | Supported as the CV fallback when no page, module or applicable theme setting exists. Does not control the separate publications page. See [[#table-of-contents][Table of contents]]. |
+
+*** Section selection and labels
+:PROPERTIES:
+:CUSTOM_ID: section-selection-and-labels
+:END:
+
+If =sections= is not specified or empty in the JSONresume file, the CV uses this order:
+
+#+begin_src json
+["work", "education", "projects", "certificates", "awards", "publications", "skills", "languages", "references"]
+#+end_src
+
+Unlike Eventide's defaults, this omits =volunteer= and =interests=, and puts certificates before awards. You can explicitly include =volunteer= and =interests=; they use the shared entry renderer. A custom list replaces the default list, so sections left out of it are omitted. Sections with no entries are always omitted even if they appear in the list. Within a section, entries appear in the order they are in the input file.
+
+Use =sectionLabels= to rename headings. Unspecified labels are derived from the section identifier (or the =type= field for project groups). This changes headings only; it does not translate dates or other interface text.
+
+For example, this selects two project groups without =projectsByType=:
+
+#+begin_src json
+{
+  "meta": {
+    "themeOptions": {
+      "sections": ["work", "projects:application", "projects:library", "skills"],
+      "sectionLabels": {
+        "work": "Experience",
+        "projects:application": "Applications",
+        "projects:library": "Libraries"
+      }
+    }
+  }
+}
+#+end_src
+
+Each =projects:<type>= group selects projects whose =type= exactly matches the suffix, including case. Types are not discovered automatically. Projects with other types, or no type, are omitted unless another listed section selects them. A plain =projects= section includes *all* projects, even when explicit groups are also listed; combining them can repeat entries.
+
+In the full =projects= section, a project's =type= is shown as a subtitle. Explicit =projects:<type>= groups omit this subtitle because the section heading already identifies the type. No =projectsByType= setting is needed.
+
+These settings affect the CV only. The separate publications page takes its order from the normalized bibliography's =sections= array, its headings from each section's =title=, and its content from =entries=.
+
+*** Action links
+:PROPERTIES:
+:CUSTOM_ID: action-links
+:END:
+
+Set =meta.themeOptions.links= to an array of objects with =name= and =url=, plus an optional =icon=. No default download links are generated when the array is absent or empty. Defaults that =resume-toolkit= supplies for Eventide are not added during a Hugo build.
+
+#+begin_src json
+{
+  "meta": {
+    "themeOptions": {
+      "links": [
+        {"name": "Download CV", "url": "<resume>.pdf", "icon": "fa-file-pdf"},
+        {"name": "GitHub", "url": "https://github.com/example", "icon": "github"},
+        {"name": "Home", "url": "/", "icon": "link", "role": "site-home"}
+      ]
+    }
+  }
+}
+#+end_src
+
+Links appear inline with their names in both integrations. Blowfish also shows icon-only floating shortcuts on screens at least 1024px wide, hidden when printing. The inline links remain available on smaller screens, but not the floating links.
+
+In the Blowfish integration, use an icon name such as =github= or =download=. Both built-in [[https://blowfish.page/samples/icons/][Blowfish icons]]  or custom icons (SVG files under =assets/icons/=) can be used. For convenience, the following exact Font Awesome aliases are also recognized (case-insensitively):
+
+| Eventide icon value                     | Blowfish icon |
+|-----------------------------------------+---------------|
+| =fa-file-pdf=, =fa-regular fa-file-pdf= | =download=    |
+| =fa-house=, =fa-regular fa-house=       | =link=        |
+| =fa-quote-left=                         | =quote-left=  |
+| =fa-file-lines=                         | =file-lines=  |
+
+This is not a general Font Awesome class parser: for example, use =github= rather than =fa-brands fa-github=. Missing or unknown icons fall back to =link=; they are not inferred from the link name. The corresponding SVG asset must exist in the host's Hugo assets. Profile icons likewise use Blowfish names derived from the lowercased =network= field in the [[https://jsonresume.org/docs/013-schema-definitions#basics-section-schema-basics][profile entry]].
+
+The generic renderer ignores the action link's =icon= value and uses the same built-in link symbol for every action, alongside its visible name. Profiles display their network names rather than theme-specific icons. The same link data can therefore be shared without installing Blowfish assets in a generic host.
+
+=<resume>= expands using the Hugo =resumeStem= setting and the CV route; see [[#configuration][Configuration]]. The =<publications>= placeholder that =resume-toolkit= expands for Eventide is not expanded here. Root-relative URLs and HTTP(S) URLs are preserved; other URLs are prefixed with the current page route.
+
+The optional =role= field in link entries is a =hugo-jsonresume= extension: the host can hide links with matching roles through =excludeLinkRoles=, without changing the shared JSON Resume. No roles are excluded by default.  For example, the following link should be omitted when rendering in a Blowfish site, since the theme navigation provides links to the homepage:
+
+#+begin_src json
+{
+  "name": "Home",
+  "icon": "fa-regular fa-house",
+  "url": "https://homepage.com/",
+  "role": "site-home"
+},
+#+end_src
+
+This is achieved with the following configuration in =params.toml=:
+
+#+begin_src toml
+[jsonresume]
+  excludeLinkRoles = ["site-home"]
+#+end_src
+
+On the separate publications page, action links come from the bibliography data's top-level =links= array (which is exported from =meta.publicationsOptions.links= by =resume-toolkit=); the same icon and URL rules apply.
+
+*** Images and note entries
+:PROPERTIES:
+:CUSTOM_ID: images-and-note-entries
+:END:
+
+Eventide also supports extensions on individual entries, outside =meta.themeOptions=:
+
+- *Certificate badges and organization logos:* =image= works on certificate, work and education entries (and other entries using the shared renderer). It displays as a small logo beside the entry. Supply an image URL or a host-owned static path; the module does not copy or download images, this can be done with =resume-toolkit='s [[https://github.com/zzamboni/resume-toolkit?tab=readme-ov-file#fetch-logos--update-logos][fetch-logos/update-logos]] commands.
+- *Certificate notes:* a minimal entry with =name= and =url=, without =issuer=, =date= or =image=, renders its name as a link and suppresses the additional “View certificate” link.
+- *Publication notes:* minimal =name=/=url= entries render as linked titles. A non-empty =bibfiles= field marks a bibliography note, suppressing authors; if it has no =url=, the module adds a link to =publicationsURL= instead.
+- *Project notes:* entries containing only a =description= render without a heading; a =type= can place them in an explicit project group.
+
+Notes use the normal entry layout and stay in input order. In particular, certificate and publication notes are not moved ahead of other entries as they are in Eventide.
+
+** Configuration
+:PROPERTIES:
+:CUSTOM_ID: configuration
+:END:
+
+In =config/_default/params.toml=:
+
+#+begin_src toml
+[jsonresume]
+  integration = "blowfish" # Default; choose "generic" for other themes.
+  # showTableOfContents = true # Optional module-wide default for both pages.
+
+  # If you change the following default values, make sure to store the json
+  # files with the corresponding name
+  resumeData = "jsonresume.resume"
+  publicationsData = "jsonresume.publications"
+
+  resumeStem = "example-cv"
+  # publicationsURL = "/cv/publications/"
+  # publicationsDescription = "Override the page description."
+  # excludeLinkRoles = ["site-home"]
+  # showAttribution = true # Show/hide the module credit on both pages.
+#+end_src
+
+Data paths are dot-separated keys in Hugo's data tree; their defaults are shown above. Set =resumeStem= when links contain =<resume>=; for example, =<resume>.pdf= becomes =/cv/example-cv.pdf=. Relative action URLs resolve from the current page, while =<resume>= on publications resolves from its CV parent. Put the corresponding downloads under the host's =static/= tree. Without a stem, use explicit filenames rather than =<resume>= links. 
+
+*** Attribution
+
+CV and publications render a small “Rendered with hugo-jsonresume” link below their content by default. It is hidden when printing, works with both integrations and shortcodes, and leaves the host theme's footer unchanged.
+
+To hide it on an individual page, add this to its TOML front matter:
+
+#+begin_src toml
+showAttribution = false
+#+end_src
+
+The page's explicit boolean takes precedence over =[jsonresume].showAttribution= in =params.toml= (or =[params.jsonresume]= in =hugo.toml=). The default is =true=; the publications page does not inherit the CV's front matter. Hosts can translate or customize the wording through the =jsonresume_attribution= i18n key, whose ={{ .Module }}= value contains the module link. If no translation is available for the current or default content language, the credit falls back to English.
+
+*** Table of contents
+:PROPERTIES:
+:CUSTOM_ID: table-of-contents
+:END:
+
+The module generates TOC links from the JSON sections. In the Blowfish integration, the theme supplies its TOC presentation; the generic integration supplies its own responsive sidebar. For either integration, the first *existing* setting below decides visibility:
+
+1. The page's front matter =showTableOfContents=.
+2. The host's =[jsonresume].showTableOfContents= in =params.toml= (or =[params.jsonresume]= in =hugo.toml=), applying to both CV and publications.
+3. For Blowfish only, =[article].showTableOfContents= in =params.toml= (or =[params.article]= in =hugo.toml=), including the theme's supplied default.
+4. For the CV only, =meta.themeOptions.showTableOfContents= in the resume JSON.
+5. =true= when none of the above is set.
+
+Use boolean =true= or =false=; explicit =false= is preserved at every level. The generic renderer does not guess other themes' TOC settings. Blowfish's theme default can disable the TOC even when Eventide's option is =true=; page or module settings override that default. No integration renders a TOC or its sidebar when sections are empty.
+
+For example, add this to the CV or publications page's TOML front matter to disable only that page's renderer TOC:
+
+#+begin_src toml
+showTableOfContents = false
+#+end_src
+
+The publications page does not inherit the CV's front matter or Eventide option. Both native module layouts and shortcodes (see below) use the same rules. A host theme may also render its own TOC around a shortcode; these settings control the module's TOC, and the host remains responsible for its outer page layout.
+
+** Using another theme
+:PROPERTIES:
+:CUSTOM_ID: using-another-theme
+:END:
+
+Set ~integration = "generic"~ in =[params.jsonresume]= in =hugo.toml=, or =[jsonresume]= in =config/_default/params.toml= to avoid using Blowfish-specific functionality or layouts. The same JSON data, options, action links and publication anchors work in both integrations.
+
+The generic renderer has its own responsive layout and section TOC. It inherits the host's fonts and text/link colors. It uses visible network names for social links and a small built-in link symbol for action buttons. It does not add breadcrumbs or floating action buttons. Light/dark appearance follows the host's colors rather than assuming a particular dark-mode class or toggle.
+
+The native ~type = "jsonresume"~ pages above work with themes whose base template provides a =main= block. Other themes can embed the renderer in ordinary content pages using shortcodes:
+
+#+begin_src go-html-template
+{{< jsonresume >}}
+#+end_src
+
+For the publications child page, use:
+
+#+begin_src go-html-template
+{{< publications >}}
+#+end_src
+
+Use ={{< ... >}}= so the generated HTML is rendered directly. For shortcode pages, omit ~type~ and ~layout~; the host's normal page layout should render =.Content=. That layout owns the outer navigation, page width and any page-title display. A theme that wraps content in restrictive typography styles may need a small host CSS adjustment. =exampleGeneric/= demonstrates this with minimal host templates and no theme.
+
+Both renderers generate their TOCs from the JSON sections; these are separate from Hugo's Markdown =.TableOfContents=. Embed only one renderer per page (=jsonresume= or =publications=). 
+
+Optional CSS variables let the host tune generic presentation:
+
+#+begin_src css
+.jsonresume-generic {
+  --jsonresume-accent: #176d83;
+  --jsonresume-border: rgb(128 128 128 / .35);
+  --jsonresume-surface: rgb(128 128 128 / .13);
+  --jsonresume-scroll-offset: 6rem;
+}
+#+end_src
+
+The accent colors CV entry markers. Link colors, including hover/visited and dark-mode states, remain controlled by the host's anchor rules. To use the accent for links as well, explicitly opt in from your host stylesheet:
+
+#+begin_src css
+.jsonresume-generic a { color: var(--jsonresume-accent); }
+#+end_src
+
+Only add that rule when defining the variable; choose an accent appropriate to each appearance. Without overrides, the renderer uses the host's link colors and translucent neutral borders/surfaces.
+
+*** Implementation and customization
+:PROPERTIES:
+:CUSTOM_ID: implementation-and-customization
+:END:
+
+Public partials =jsonresume/cv.html= and =jsonresume/publications.html= dispatch to integration-specific partials under =jsonresume/integrations/<integration>/=. Each integration owns its page markup, styling and icon behavior. The original Blowfish CSS paths remain intact; generic pages load only =css/jsonresume-generic.css=.
+
+Shared helpers handle data lookup (=data.html=), section selection (=cv-sections.html=, =publication-sections.html=), dates, action URL resolution and role filtering (=links.html=), publication metadata (=publication-meta.html=), and TOC visibility/section links (=show-toc.html=, =toc-markup.html=). Both integrations also reuse the existing semantic entry markup (=entry.html=, =publication-entry.html=) and labeled action-link markup (=action-links.html=). Host overrides at these paths continue to take precedence.
+
+There is no theme detection or adapter registration framework. A future supported theme can add its own integration when there is a concrete need. Generic support is an embedding option, not a promise of automatic visual matching for all themes.
+
+#+begin_quote
+*Tip* \\
+If you create a new custom integration for a theme, please [[https://github.com/zzamboni/hugo-jsonresume/pulls][contribute it]]!
+#+end_quote
+
+** Example and validation
+:PROPERTIES:
+:CUSTOM_ID: example-and-validation
+:END:
+
+The synthetic =exampleSite/= demonstrates =/cv/= routes, download links, project groups, publications and fallback metadata. It deliberately includes no personal data or generated PDFs. Replace its illustrative download URLs with real host-owned files before publishing a site.
+
+Clone the tested Blowfish version into the example (only needed once):
+
+#+begin_src sh
+git clone --depth 1 --branch v3.8.0 https://github.com/nunocoracao/blowfish.git exampleSite/themes/blowfish
+hugo server --source exampleSite
+#+end_src
+
+Or serve the generic example, with no theme clone required:
+
+#+begin_src sh
+hugo server --source exampleGeneric
+#+end_src
+
+Both expose =/cv/= and =/cv/publications/=. Their data is shared from =exampleSite/data/=; illustrative download links do not point to generated PDFs.
+
+=exampleSite/data/jsonresume/resume.json= is a JSON export of Eventide's [[https://github.com/zzamboni/jsonresume-theme-eventide/blob/main/editor/sample-resume.js][editor sample]], which is itself an extension of the =@jsonresume/schema= [[https://github.com/jsonresume/jsonresume.org/blob/master/packages/schema/sample.resume.json][sample]].
+
+Run =python3 tests/check_example.py= after cloning Blowfish. The checks build both integrations and cover routes, sections, action links, metadata, icons, imported CSS, generic shortcodes/native layouts and invalid integration selection. CI runs them with the pinned Blowfish commit and Hugo version.
+
+** Origin and license
+:PROPERTIES:
+:CUSTOM_ID: origin-and-license
+:END:
+
+The profile layout adapts Blowfish's MIT-licensed profile partial. See =LICENSE= and =NOTICE=.
