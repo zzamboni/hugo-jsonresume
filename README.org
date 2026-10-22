@@ -1,7 +1,6 @@
-* JSON Resume in Hugo
-:PROPERTIES:
-:CUSTOM_ID: json-resume-in-hugo
-:END:
+#+title: JSON Resume in Hugo
+#+author: Diego Zamboni
+#+email: diego@zzamboni.org
 
 Render [[https://jsonresume.org/][JSON Resume]] and an optional bibliography inside a Hugo site. The Hugo [[https://blowfish.page/][Blowfish theme]] is supported natively by default, retaining its typography, icons, breadcrumbs and table of contents. A generic integration is provided for use with other themes. This is a [[https://gohugo.io/hugo-modules/][Hugo Module]], not a standalone theme. It is inspired by [[https://github.com/zzamboni/jsonresume-theme-eventide][Eventide]] but does not depend on it. It can work in conjunction with [[https://github.com/zzamboni/resume-toolkit][resume-toolkit]] (e.g. linking to generated PDF/BibTeX files).
 
@@ -10,7 +9,22 @@ Render [[https://jsonresume.org/][JSON Resume]] and an optional bibliography ins
 Live example: https://zzamboni.org/vita/
 #+end_quote
 
-** Requirements and installation
+* Table of Contents :TOC_3:noexport:
+- [[#requirements-and-installation][Requirements and installation]]
+- [[#content-and-data][Content and data]]
+- [[#eventide-option-compatibility][Eventide option compatibility]]
+  - [[#section-selection-and-labels][Section selection and labels]]
+  - [[#action-links][Action links]]
+  - [[#images-and-note-entries][Images and note entries]]
+- [[#configuration][Configuration]]
+  - [[#attribution][Attribution]]
+  - [[#table-of-contents][Table of contents]]
+- [[#using-another-theme][Using another theme]]
+  - [[#implementation-and-customization][Implementation and customization]]
+- [[#example-and-validation][Example and validation]]
+- [[#origin-and-license][Origin and license]]
+
+* Requirements and installation
 :PROPERTIES:
 :CUSTOM_ID: requirements-and-installation
 :END:
@@ -32,7 +46,7 @@ path = "github.com/zzamboni/hugo-jsonresume"
 
 The module will be downloaded and installed the next time =hugo= runs. This will create or update the =go.mod= and =go.sum= files to reflect the specific version being used.
 
-** Content and data
+* Content and data
 :PROPERTIES:
 :CUSTOM_ID: content-and-data
 :END:
@@ -89,7 +103,7 @@ The bibliography input is *normalized JSON*, not raw BibTeX.  [[https://github.c
 
 Store it at =data/jsonresume/publications.json=. Entries support =url=, =editor=, =doi=, =note=, and publication venue fields in this order of precedence: =journal=, =booktitle=, =publisher=, =school=, =institution=, =howpublished=. =type= and =number= are rendered together. Keep entry keys stable because =#pub-<key>= anchors are public permalinks.
 
-** Eventide option compatibility
+* Eventide option compatibility
 :PROPERTIES:
 :CUSTOM_ID: eventide-option-compatibility
 :END:
@@ -108,7 +122,7 @@ The renderer can reuse the following [[https://github.com/zzamboni/jsonresume-th
 | =footer_right=        | Ignored. Footer content comes from the host site's theme.                                                                                                                             |
 | =showTableOfContents= | Supported as the CV fallback when no page, module or applicable theme setting exists. Does not control the separate publications page. See [[#table-of-contents][Table of contents]]. |
 
-*** Section selection and labels
+** Section selection and labels
 :PROPERTIES:
 :CUSTOM_ID: section-selection-and-labels
 :END:
@@ -146,7 +160,7 @@ In the full =projects= section, a project's =type= is shown as a subtitle. Expli
 
 These settings affect the CV only. The separate publications page takes its order from the normalized bibliography's =sections= array, its headings from each section's =title=, and its content from =entries=.
 
-*** Action links
+** Action links
 :PROPERTIES:
 :CUSTOM_ID: action-links
 :END:
@@ -204,7 +218,7 @@ This is achieved with the following configuration in =params.toml=:
 
 On the separate publications page, action links come from the bibliography data's top-level =links= array (which is exported from =meta.publicationsOptions.links= by =resume-toolkit=); the same icon and URL rules apply.
 
-*** Images and note entries
+** Images and note entries
 :PROPERTIES:
 :CUSTOM_ID: images-and-note-entries
 :END:
@@ -218,7 +232,7 @@ Eventide also supports extensions on individual entries, outside =meta.themeOpti
 
 Notes use the normal entry layout and stay in input order. In particular, certificate and publication notes are not moved ahead of other entries as they are in Eventide.
 
-** Configuration
+* Configuration
 :PROPERTIES:
 :CUSTOM_ID: configuration
 :END:
@@ -244,7 +258,7 @@ In =config/_default/params.toml=:
 
 Data paths are dot-separated keys in Hugo's data tree; their defaults are shown above. Set =resumeStem= when links contain =<resume>=; for example, =<resume>.pdf= becomes =/cv/example-cv.pdf=. Relative action URLs resolve from the current page, while =<resume>= on publications resolves from its CV parent. Put the corresponding downloads under the host's =static/= tree. Without a stem, use explicit filenames rather than =<resume>= links. 
 
-*** Attribution
+** Attribution
 
 CV and publications render a small “Rendered with hugo-jsonresume” link below their content by default. It is hidden when printing, works with both integrations and shortcodes, and leaves the host theme's footer unchanged.
 
@@ -256,7 +270,7 @@ showAttribution = false
 
 The page's explicit boolean takes precedence over =[jsonresume].showAttribution= in =params.toml= (or =[params.jsonresume]= in =hugo.toml=). The default is =true=; the publications page does not inherit the CV's front matter. Hosts can translate or customize the wording through the =jsonresume_attribution= i18n key, whose ={{ .Module }}= value contains the module link. If no translation is available for the current or default content language, the credit falls back to English.
 
-*** Table of contents
+** Table of contents
 :PROPERTIES:
 :CUSTOM_ID: table-of-contents
 :END:
@@ -279,7 +293,7 @@ showTableOfContents = false
 
 The publications page does not inherit the CV's front matter or Eventide option. Both native module layouts and shortcodes (see below) use the same rules. A host theme may also render its own TOC around a shortcode; these settings control the module's TOC, and the host remains responsible for its outer page layout.
 
-** Using another theme
+* Using another theme
 :PROPERTIES:
 :CUSTOM_ID: using-another-theme
 :END:
@@ -323,7 +337,7 @@ The accent colors CV entry markers. Link colors, including hover/visited and dar
 
 Only add that rule when defining the variable; choose an accent appropriate to each appearance. Without overrides, the renderer uses the host's link colors and translucent neutral borders/surfaces.
 
-*** Implementation and customization
+** Implementation and customization
 :PROPERTIES:
 :CUSTOM_ID: implementation-and-customization
 :END:
@@ -339,7 +353,7 @@ There is no theme detection or adapter registration framework. A future supporte
 If you create a new custom integration for a theme, please [[https://github.com/zzamboni/hugo-jsonresume/pulls][contribute it]]!
 #+end_quote
 
-** Example and validation
+* Example and validation
 :PROPERTIES:
 :CUSTOM_ID: example-and-validation
 :END:
@@ -365,7 +379,7 @@ Both expose =/cv/= and =/cv/publications/=. Their data is shared from =exampleSi
 
 Run =python3 tests/check_example.py= after cloning Blowfish. The checks build both integrations and cover routes, sections, action links, metadata, icons, imported CSS, generic shortcodes/native layouts and invalid integration selection. CI runs them with the pinned Blowfish commit and Hugo version.
 
-** Origin and license
+* Origin and license
 :PROPERTIES:
 :CUSTOM_ID: origin-and-license
 :END:
