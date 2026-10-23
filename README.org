@@ -6,7 +6,7 @@ Render [[https://jsonresume.org/][JSON Resume]] and an optional bibliography ins
 
 #+begin_quote
 [!TIP]
-Live example: https://zzamboni.org/vita/
+Live examples: [[https://zzamboni.github.io/hugo-jsonresume/][Blowfish and Generic demos]] · [[https://zzamboni.org/vita/][Real-world CV]]
 #+end_quote
 
 * Table of Contents :TOC_3:noexport:
@@ -374,6 +374,23 @@ hugo server --source exampleGeneric
 #+end_src
 
 Both expose =/cv/= and =/cv/publications/=. Their data is shared from =exampleSite/data/=; illustrative download links do not point to generated PDFs.
+
+** GitHub Pages demos
+
+The [[https://zzamboni.github.io/hugo-jsonresume/][demo landing page]] links to both integrations, published under =blowfish/= and =generic/= with CV and publications pages in each. The demos use the checked-out module and shared sample data; PDF and BibTeX downloads remain illustrative placeholders.
+
+The =Deploy examples to GitHub Pages= workflow builds and deploys both examples on every push to =main=. It also supports manual runs from =main=. Pull requests build and check the same artifact without deploying. Hugo Extended and Blowfish are pinned to the same versions used by the example checks.
+
+One-time repository setup: in *Settings → Pages → Build and deployment*, choose *GitHub Actions* as the source. No additional secrets or generated-output branch are required. The workflow uses the Pages base URL, including a configured custom domain, so links and assets retain the appropriate path prefix.
+
+To build the combined site locally after installing Go, Hugo and the pinned Blowfish theme:
+
+#+begin_src elvish
+python3 scripts/build-pages.py --base-url https://zzamboni.github.io/hugo-jsonresume/
+#+end_src
+
+The output goes to =public/=, which must not already exist (or pass =--destination= with a fresh directory). The build checks both renderers' content, navigation and CSS URLs under the deployment prefix.
+
 
 =exampleSite/data/jsonresume/resume.json= is a JSON export of Eventide's [[https://github.com/zzamboni/jsonresume-theme-eventide/blob/main/editor/sample-resume.js][editor sample]], which is itself an extension of the =@jsonresume/schema= [[https://github.com/jsonresume/jsonresume.org/blob/master/packages/schema/sample.resume.json][sample]].
 
